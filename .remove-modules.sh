@@ -1,1 +1,0 @@
-rm -r src/webapp/node_modules src/webapp/package-lock.json
