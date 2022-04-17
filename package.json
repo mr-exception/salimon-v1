@@ -9,7 +9,7 @@
     "bootstrap": "npm install; lerna bootstrap;",
     "start:webapp": "lerna run --scope webapp --stream start",
     "build:webapp": "lerna run --scope webapp --stream build",
-    "start:full-node": "lerna run --scope full-node --stream start",
+    "start:full-node": "lerna run --scope full-node --stream start:dev",
     "build:full-node": "lerna run --scope full-node --stream build"
   },
   "devDependencies": {

@@ -1,0 +1,22 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type HeartBeat {
+  """service name"""
+  name: String!
+
+  """service type"""
+  serviceType: String!
+
+  """service current time"""
+  time: Float!
+}
+
+type Query {
+  heartBeat: HeartBeat!
+}
+
+type Subscription {
+  timeChanged: Float!
+}
