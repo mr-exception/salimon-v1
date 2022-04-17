@@ -1,0 +1,10 @@
+.searchInput {
+  @apply border-2 border-primary rounded-md bg-secondary placeholder-base px-4 flex content-center items-center italic;
+  flex: 1;
+  min-height: 40px;
+}
+.searchAdd {
+  @apply flex flex-row content-center items-center p-2 hover:bg-primary m-2 rounded-md;
+  max-width: 45px;
+  flex: 1;
+}

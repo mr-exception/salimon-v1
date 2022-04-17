@@ -1,0 +1,17 @@
+.container {
+  @apply flex flex-col mb-2;
+}
+
+.icon {
+  @apply flex justify-center items-center w-full;
+  flex: 1;
+}
+
+.icon > img {
+  max-width: 2.5rem;
+}
+
+.caption {
+  @apply mt-2 text-center;
+  flex: 1;
+}

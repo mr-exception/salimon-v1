@@ -1,0 +1,4 @@
+.contactList {
+  @apply overflow-y-auto block;
+  max-height: 100vh;
+}

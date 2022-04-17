@@ -1,0 +1,19 @@
+.container {
+  @apply flex flex-row border-gray-dark text-white;
+  min-height: 500px;
+  width: "100%";
+  height: calc(100vh);
+}
+.toolbar {
+  @apply flex bg-gray-darker pt-4;
+  flex: 1;
+  min-width: 70px;
+  max-width: 90px;
+  display: flex;
+  flex-direction: column;
+}
+.children {
+  @apply overflow-auto text-white;
+  flex: 1;
+  background: #282a2d;
+}

@@ -1,0 +1,5 @@
+.fixHeight {
+  @apply overflow-y-auto;
+  max-height: 848px;
+  height: calc(100vh - 4px);
+}

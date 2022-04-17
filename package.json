@@ -1,0 +1,17 @@
+{
+  "name": "salimon",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "bootstrap:clean": "./remove-modules.sh; npm install; lerna bootstrap;",
+    "bootstrap": "npm install; lerna bootstrap;",
+    "start:webapp": "lerna run --scope webapp --stream start",
+    "build:webapp": "lerna run --scope webapp --stream build"
+  },
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,19 @@
+.container {
+  @apply flex flex-1 flex-col justify-center items-center select-none cursor-pointer mb-2 py-2;
+  max-height: 80px;
+  transition: all 200ms;
+}
+
+.icon {
+  @apply flex w-1/2;
+  flex: 4;
+}
+
+.caption {
+  @apply text-center text-white flex-1;
+}
+
+.active {
+  @apply rounded-l-lg;
+  background: #444;
+}

@@ -1,0 +1,15 @@
+.sent {
+  @apply flex items-center justify-end;
+}
+.received {
+  @apply flex items-center justify-start;
+}
+.box {
+  @apply bg-secondary my-2 mx-4 rounded-md p-4 w-1/2;
+  min-height: 40px;
+  min-width: 400px;
+  max-width: 600px;
+}
+.date {
+  @apply flex items-center justify-end mt-4 text-sm;
+}

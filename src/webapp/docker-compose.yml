@@ -1,0 +1,12 @@
+version: "3.4"
+services:
+  salimon-webapp:
+    image: salimon-webapp
+    stdin_open: true
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.dev
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/usr/src/app:delegated

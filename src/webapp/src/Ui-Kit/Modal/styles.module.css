@@ -1,0 +1,7 @@
+.overlay {
+  @apply fixed flex justify-center items-center top-0 left-0 right-0 bottom-0;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.modalContainer {
+  @apply bg-secondary text-white border-2 border-solid border-primary rounded-xl  p-4;
+}

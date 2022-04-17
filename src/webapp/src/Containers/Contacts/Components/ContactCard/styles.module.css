@@ -1,0 +1,3 @@
+.container {
+  @apply bg-secondary rounded-lg p-4 w-full;
+}

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512"
+  viewBox="0 0 512 512">
+  <defs>
+    <style>
+      .dot {
+        fill: none;
+        stroke: #000;
+        stroke-width: 10px;
+      }
+
+      .line {
+        fill-rule: evenodd;
+        stroke: #000;
+        stroke-width: 10px;
+      }
+    </style>
+  </defs>
+  <circle class="dot" cx="85" cy="85" r="40" />
+  <circle class="dot" cx="85" cy="415" r="40" />
+  <circle class="dot" cx="85" cy="305" r="40" />
+  <circle class="dot" cx="85" cy="195" r="40" />
+  <circle class="dot" cx="415" cy="85" r="40" />
+  <circle class="dot" cx="415" cy="195" r="40" />
+  <circle class="dot" cx="305" cy="415" r="40" />
+  <circle class="dot" cx="415" cy="310" r="40" />
+  <circle class="dot" cx="195" cy="415" r="40" />
+  <circle class="dot" cx="195" cy="305" r="40" />
+  <circle class="dot" cx="305" cy="195" r="40" />
+  <circle class="dot" cx="305" cy="305" r="40" />
+  <circle class="dot" cx="415" cy="415" r="40" />
+  <circle class="dot" cx="195" cy="195" r="40" />
+  <circle class="dot" cx="305" cy="85" r="40" />
+  <circle class="dot" cx="195" cy="85" r="40" />
+  <path class="line" d="M375,85v1H350V86h30" />
+  <path class="line" d="M265,195v1H235v-1h30Z" />
+  <path class="line" d="M265,415v1H235v-1h30Z" />
+  <path class="line" d="M125,305v-1h30v1H125Z" />
+  <path class="line" d="M83,125h1v25H85V125Z" />
+  <path class="line" d="M415,240h1v30h-1V240Z" />
+  <path class="line" d="M305,345h1v30h-1V345Z" />
+  <path class="line" d="M195,235l1,0.038-1,30Z" />
+  <path class="line" d="M230,110l0.707-.707,50,50-0.707.707Z" />
+  <path class="line" d="M115,335l0.707-.707,50,50-0.707.707Z" />
+  <path class="line" d="M335,335l0.707-.707,50,50-0.707.707Z" />
+  <path class="line" d="M275,225l0.708,0.707-50,50-0.707-.707Z" />
+  <path class="line" d="M275,335l0.707,0.707-50,50-0.707-.707Z" />
+  <path class="line" d="M165,115l0.708,0.707-50,50-0.707-.707Z" />
+</svg>

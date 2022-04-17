@@ -1,0 +1,5 @@
+.messageList {
+  @apply overflow-y-auto bg-gray flex-1 w-full;
+  max-height: calc(100vh - 100px);
+  min-height: 400px;
+}

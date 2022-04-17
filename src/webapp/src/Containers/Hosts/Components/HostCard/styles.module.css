@@ -1,0 +1,50 @@
+.container {
+  @apply border-2 rounded-lg border-white p-2 mt-2;
+}
+.statusBar {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+.info {
+  display: flex;
+  flex-direction: row;
+  flex: 4;
+}
+.generalInfo {
+  flex: 4;
+  border-right: 1px solid #999;
+}
+.staticInfo {
+  flex: 4;
+  padding-left: 30px;
+}
+.actions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.actionsItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  max-width: 120px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.host-card__actions__item:hover {
+  background: #eee;
+}
+
+.host-card__actions__icon {
+  flex: 1;
+  max-width: 30px;
+  padding: 10px;
+}
+.host-card__actions__caption {
+  flex: 1;
+}

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: webapp-route
+spec:
+  host: app.salimon.ir
+  to:
+    kind: Service
+    name: webapp-service
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow
+  port:
+    targetPort: 80
