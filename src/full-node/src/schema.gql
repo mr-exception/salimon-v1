@@ -13,8 +13,20 @@ type HeartBeat {
   time: Float!
 }
 
+type Signature {
+  _id: String!
+  createdAt: Float!
+  updatedAt: Float!
+  address: String!
+  publicKey: String!
+  secret: String!
+  balance: Float!
+}
+
 type Query {
   heartBeat: HeartBeat!
+  getSignatures(balanceMin: Int, balanceMax: Int, address: String, page: Int = 1, pageSize: Int = 10): [Signature!]!
+  getSignaturesCount(balanceMin: Int, balanceMax: Int, address: String): Float!
 }
 
 type Subscription {

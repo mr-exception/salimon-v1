@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthMiddleware } from 'src/auth.middleware';
 import { Signature, SignatureSchema } from 'src/models/signature.schema';
 import { SignaturesController } from './signatures.controller';
+import { SignaturesResolver } from './signatures.resolver';
 import { SignaturesService } from './signatures.service';
 
 @Module({
@@ -12,7 +13,7 @@ import { SignaturesService } from './signatures.service';
       { name: Signature.name, schema: SignatureSchema },
     ]),
   ],
-  providers: [SignaturesService],
+  providers: [SignaturesService, SignaturesResolver],
 })
 export class SignaturesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
