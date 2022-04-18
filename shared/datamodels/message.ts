@@ -6,6 +6,7 @@ export interface IPacketMeta {
 }
 
 export interface IMessage extends IEntity {
+  messageId: string;
   srcAddress: string;
   dstAddress: string;
   packetCount: number;

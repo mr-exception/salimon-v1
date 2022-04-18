@@ -30,6 +30,7 @@ type Thread {
   updatedAt: Float!
   members: [String!]!
   name: String!
+  threadId: String!
   ownerAddress: String!
 }
 
@@ -37,8 +38,8 @@ type Query {
   heartBeat: HeartBeat!
   getSignatures(balanceMin: Int, balanceMax: Int, address: String, page: Int = 1, pageSize: Int = 10): [Signature!]!
   getSignaturesCount(balanceMin: Int, balanceMax: Int, address: String): Float!
-  getThreads(id: String, ownerAddress: String, member: String, page: Int = 1, pageSize: Int = 10): [Thread!]!
-  getThreadsCount(id: String, ownerAddress: String, member: String): Float!
+  getThreads(id: String, threadId: String, ownerAddress: String, member: String, page: Int = 1, pageSize: Int = 10): [Thread!]!
+  getThreadsCount(id: String, threadId: String, ownerAddress: String, member: String): Float!
 }
 
 type Subscription {

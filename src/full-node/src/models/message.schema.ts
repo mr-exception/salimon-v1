@@ -1,4 +1,4 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { IMessage, IPacketMeta } from 'datamodels/message';
 import { Entity } from './entity.schema';
@@ -22,6 +22,9 @@ export class PacketMeta implements IPacketMeta {
 export class Message extends Entity implements IMessage {
   @Prop(String)
   @Field()
+  messageId: string;
+  @Prop(String)
+  @Field()
   dstAddress: string;
   @Prop(Number)
   @Field()
@@ -32,4 +35,19 @@ export class Message extends Entity implements IMessage {
   @Prop([PacketMeta])
   @Field()
   data: IPacketMeta[];
+}
+
+export const MessageSchema = SchemaFactory.createForClass(Message);
+
+export function messageResponse(message: Message): IMessage {
+  return {
+    _id: message._id,
+    messageId: message.messageId,
+    dstAddress: message.dstAddress,
+    srcAddress: message.srcAddress,
+    data: message.data,
+    packetCount: message.packetCount,
+    createdAt: message.createdAt,
+    updatedAt: message.updatedAt,
+  };
 }

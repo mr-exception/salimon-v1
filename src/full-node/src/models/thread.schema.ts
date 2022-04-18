@@ -17,6 +17,9 @@ export class Thread extends Entity implements IThread {
   name: string;
   @Prop(String)
   @Field()
+  threadId: string;
+  @Prop(String)
+  @Field()
   ownerAddress: string;
 }
 
@@ -25,6 +28,7 @@ export const ThreadSchema = SchemaFactory.createForClass(Thread);
 export function threadResponse(thread: Thread): IThread {
   return {
     _id: thread._id,
+    threadId: thread.threadId,
     name: thread.name,
     members: thread.members,
     ownerAddress: thread.ownerAddress,

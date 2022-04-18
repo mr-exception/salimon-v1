@@ -1,7 +1,5 @@
 import { Body, Controller, Delete, Post, Req, Res } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IThread } from 'datamodels/thread';
-import { createHash } from 'crypto';
 import {
   Thread,
   ThreadDocument,
@@ -11,7 +9,6 @@ import { Model } from 'mongoose';
 import { Request, Response } from 'express';
 import { CreateThreadDTO, UpdateThreadDTO } from './validators';
 import { createEntity } from 'src/models/entity.schema';
-import mongoose from 'mongoose';
 
 @Controller('threads')
 export class ThreadsController {
@@ -22,9 +19,14 @@ export class ThreadsController {
     @Res() res: Response,
     @Body() body: CreateThreadDTO,
   ) {
-    const { name, members } = body;
+    const { name, members, threadId } = body;
+    if (await this.model.findOne({ threadId })) {
+      res.status(403).send({ message: 'this thread is already registered' });
+      return;
+    }
     const record = new this.model(
       createEntity({
+        threadId,
         members,
         name,
         ownerAddress: req.headers['x-address'],

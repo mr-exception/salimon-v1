@@ -1,21 +1,22 @@
 import { Args, Int, Query, Resolver } from '@nestjs/graphql';
 import { InjectModel } from '@nestjs/mongoose';
-import { IThread } from 'datamodels/thread';
+import { IMessage } from 'datamodels/message';
 import { Model, Query as MonoQuery } from 'mongoose';
 import {
-  Thread,
-  ThreadDocument,
-  threadResponse,
-} from 'src/models/thread.schema';
+  Message,
+  MessageDocument,
+  messageResponse,
+} from 'src/models/message.schema';
 
 @Resolver()
-export class ThreadsResolver {
-  constructor(@InjectModel(Thread.name) private model: Model<ThreadDocument>) {}
+export class MessagesResolver {
+  constructor(
+    @InjectModel(Message.name) private model: Model<MessageDocument>,
+  ) {}
 
-  @Query(() => [Thread])
-  async getThreads(
+  @Query(() => [Message])
+  async getMessages(
     @Args('id', { type: () => String, nullable: true }) id: string,
-    @Args('threadId', { type: () => String, nullable: true }) threadId: string,
     @Args('ownerAddress', { type: () => String, nullable: true })
     ownerAddress: string,
     @Args('member', { type: () => String, nullable: true }) member: string,
@@ -23,42 +24,33 @@ export class ThreadsResolver {
     page: number,
     @Args('pageSize', { type: () => Int, nullable: true, defaultValue: 10 })
     pageSize: number,
-  ): Promise<IThread[]> {
-    const queryInstance = generateQuery(member, ownerAddress, id, threadId);
+  ): Promise<IMessage[]> {
+    const queryInstance = generateQuery(member, ownerAddress, id);
 
     const signatures = await this.model
       .find(queryInstance.getQuery())
       .limit(pageSize)
       .skip((page - 1) * pageSize);
-    return signatures.map(threadResponse);
+    return signatures.map(messageResponse);
   }
 
   @Query(() => Number)
-  async getThreadsCount(
+  async getMessagesCount(
     @Args('id', { type: () => String, nullable: true }) id: string,
-    @Args('threadId', { type: () => String, nullable: true }) threadId: string,
     @Args('ownerAddress', { type: () => String, nullable: true })
     ownerAddress: string,
     @Args('member', { type: () => String, nullable: true }) member: string,
   ): Promise<number> {
-    const queryInstance = generateQuery(member, ownerAddress, id, threadId);
+    const queryInstance = generateQuery(member, ownerAddress, id);
     const count = await this.model.find(queryInstance.getQuery()).count();
     return count;
   }
 }
 
-function generateQuery(
-  member: string,
-  ownerAddress: string,
-  id: string,
-  threadId: string,
-) {
+function generateQuery(member: string, ownerAddress: string, id: string) {
   let queryInstance = new MonoQuery();
   if (member) {
     queryInstance = queryInstance.where('members').equals(member);
-  }
-  if (threadId) {
-    queryInstance = queryInstance.where('threadId').equals(threadId);
   }
   if (ownerAddress) {
     queryInstance = queryInstance.where('ownerAddress').equals(ownerAddress);

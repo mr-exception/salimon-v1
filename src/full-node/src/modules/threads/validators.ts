@@ -1,10 +1,13 @@
-import { IsMongoId, IsNotEmpty } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateThreadDTO {
   @IsNotEmpty()
   members: string[];
   @IsNotEmpty()
   name: string;
+  @IsNotEmpty()
+  @IsUUID()
+  threadId: string;
 }
 
 export class UpdateThreadDTO {
@@ -15,4 +18,7 @@ export class UpdateThreadDTO {
   members: string[];
   @IsNotEmpty()
   name: string;
+  @IsNotEmpty()
+  @IsUUID()
+  threadId: string;
 }
