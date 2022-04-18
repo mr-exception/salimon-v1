@@ -19,6 +19,7 @@ type Signature {
   updatedAt: Float!
   address: String!
   publicKey: String!
+  name: String!
   secret: String!
   balance: Float!
 }

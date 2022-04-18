@@ -22,7 +22,7 @@ export class SignaturesController {
     @Res() res: Response,
     @Body() body: CreateSignatureDTO,
   ) {
-    const { secret, address, publicKey } = body;
+    const { secret, address, publicKey, name } = body;
     const signature = await this.model.findOne({ address });
     if (!!signature) {
       res.status(401).send({ message: 'this address is taken' });
@@ -32,6 +32,7 @@ export class SignaturesController {
         balance: 0,
         address,
         publicKey,
+        name,
         secret: createHash('md5').update(secret).digest('base64'),
       }),
     );
@@ -51,6 +52,7 @@ export class SignaturesController {
     });
     signature.secret = createHash('md5').update(body.secret).digest('base64');
     signature.publicKey = body.publicKey;
+    signature.name = body.name;
     await signature.save();
     return signatureResponse(signature);
   }

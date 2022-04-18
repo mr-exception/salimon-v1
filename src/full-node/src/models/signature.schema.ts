@@ -17,6 +17,9 @@ export class Signature extends Entity implements ISignature {
   publicKey: string;
   @Prop(String)
   @Field()
+  name: string;
+  @Prop(String)
+  @Field()
   secret: string;
   @Prop(Number)
   @Field()
@@ -28,6 +31,7 @@ export const SignatureSchema = SchemaFactory.createForClass(Signature);
 export function signatureResponse(signature: Signature): ISignature {
   return {
     _id: signature._id,
+    name: signature.name,
     address: signature.address,
     publicKey: signature.publicKey,
     balance: signature.balance,
