@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GeneralResolver } from './general.resolver';
 import { SignaturesModule } from './modules/signatures/signatures.module';
+import { ThreadsModule } from './modules/threads/threads.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SignaturesModule } from './modules/signatures/signatures.module';
     }),
     MongooseModule.forRoot('mongodb://localhost:27017/salimon'),
     SignaturesModule,
+    ThreadsModule,
   ],
   controllers: [AppController],
   providers: [AppService, GeneralResolver],

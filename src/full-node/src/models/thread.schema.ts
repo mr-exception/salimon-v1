@@ -1,4 +1,4 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { IThread } from 'datamodels/thread';
 import { Entity } from './entity.schema';
@@ -10,7 +10,7 @@ export type ThreadDocument = Thread & Document;
 @ObjectType()
 export class Thread extends Entity implements IThread {
   @Prop([String])
-  @Field()
+  @Field(() => [String])
   members: string[];
   @Prop(String)
   @Field()
@@ -18,4 +18,17 @@ export class Thread extends Entity implements IThread {
   @Prop(String)
   @Field()
   ownerAddress: string;
+}
+
+export const ThreadSchema = SchemaFactory.createForClass(Thread);
+
+export function threadResponse(thread: Thread): IThread {
+  return {
+    _id: thread._id,
+    name: thread.name,
+    members: thread.members,
+    ownerAddress: thread.ownerAddress,
+    createdAt: thread.createdAt,
+    updatedAt: thread.updatedAt,
+  };
 }
