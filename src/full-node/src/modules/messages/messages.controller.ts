@@ -21,15 +21,24 @@ export class MessagesController {
     @Res() res: Response,
     @Body() body: SubmitMessageDTO,
   ) {
-    const { name, members } = body;
-    const record = new this.model(
-      createEntity({
-        members,
-        name,
-        ownerAddress: req.headers['x-address'],
-      }),
-    );
-    const result = await record.save();
-    res.send(messageResponse(result));
+    const { messageId, data, position, pckCount, dst } = body;
+    const message = await this.model.findOne({ messageId });
+    if (!message) {
+      const record = new this.model(
+        createEntity({
+          dstAddress: dst,
+          srcAddress: req.headers['x-address'],
+          packetCount: pckCount,
+          messageId,
+          data: [{ position, dataPath: data }],
+        }),
+      );
+      const result = await record.save();
+      res.send(messageResponse(result));
+      return;
+    }
+    message.data.push({ position, dataPath: data });
+    message.save();
+    res.send(messageResponse(message));
   }
 }

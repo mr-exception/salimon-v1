@@ -24,6 +24,22 @@ type Signature {
   balance: Float!
 }
 
+type PacketMeta {
+  dataPath: String!
+  position: Float!
+}
+
+type Message {
+  _id: String!
+  createdAt: Float!
+  updatedAt: Float!
+  messageId: String!
+  dstAddress: String!
+  packetCount: Float!
+  srcAddress: String!
+  data: [PacketMeta!]!
+}
+
 type Thread {
   _id: String!
   createdAt: Float!
@@ -40,6 +56,8 @@ type Query {
   getSignaturesCount(balanceMin: Int, balanceMax: Int, address: String): Float!
   getThreads(id: String, threadId: String, ownerAddress: String, member: String, page: Int = 1, pageSize: Int = 10): [Thread!]!
   getThreadsCount(id: String, threadId: String, ownerAddress: String, member: String): Float!
+  getMessages(id: String, messageId: String, src: String, dst: String, targetId: String, createdAtMax: Int, createdAtMin: Int, updatedAtMax: Int, updatedAtMin: Int, page: Int = 1, pageSize: Int = 10): [Message!]!
+  getMessagesCount(id: String, messageId: String, src: String, dst: String, targetId: String, createdAtMax: Int, createdAtMin: Int, updatedAtMax: Int, updatedAtMin: Int): Float!
 }
 
 type Subscription {

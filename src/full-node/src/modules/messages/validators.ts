@@ -1,11 +1,18 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 
 export class SubmitMessageDTO {
   @IsNotEmpty()
   @IsUUID()
   messageId: string;
   @IsNotEmpty()
-  members: string[];
+  data: string;
   @IsNotEmpty()
-  name: string;
+  @IsUUID()
+  dst: string;
+  @IsNotEmpty()
+  @IsNumber()
+  pckCount: number;
+  @IsNotEmpty()
+  @IsNumber()
+  position: number;
 }

@@ -33,7 +33,7 @@ export class Message extends Entity implements IMessage {
   @Field()
   srcAddress: string;
   @Prop([PacketMeta])
-  @Field()
+  @Field(() => [PacketMeta])
   data: IPacketMeta[];
 }
 
