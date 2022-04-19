@@ -8,7 +8,6 @@ import {
   getHostsFromDB,
   insertHostInDB,
   IRecord,
-  updateHostsIfExists,
 } from "Utils/storage";
 
 export interface IHostsContext {

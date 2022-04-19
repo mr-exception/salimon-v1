@@ -1,6 +1,4 @@
-import { AuthContext } from "AuthContextProvider";
-import { useGetContact } from "DataContext/ContactsContextProvider";
-import React, { useContext } from "react";
+import React from "react";
 import { FaTrash } from "react-icons/fa";
 import { IThread } from "Structs/Thread";
 import { IRecord } from "Utils/storage";
@@ -9,7 +7,6 @@ interface IProps {
   onSelected: () => void;
 }
 const ThreadCard: React.FC<IProps> = ({ thread, onSelected }) => {
-  const { address } = useContext(AuthContext);
   // console.log(thread.value);
   // const contactsAddress = thread.value.members.find(
   //   (record) => record !== address

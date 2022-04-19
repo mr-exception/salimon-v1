@@ -1,6 +1,5 @@
-import { AuthContext } from "AuthContextProvider";
 import { IndexableType } from "dexie";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { IThread } from "Structs/Thread";
 import {
@@ -10,7 +9,6 @@ import {
   IRecord,
   updateThreadInDB,
 } from "Utils/storage";
-import { useAppendContact } from "./ContactsContextProvider";
 
 export interface IThreadsContext {
   activeThread?: IRecord<IThread>;
@@ -32,10 +30,8 @@ export const ThreadsContext = createContext<IThreadsContext>({
 export const ThreadsContextProvider: React.FC<{ children: any }> = ({
   children,
 }) => {
-  const { address, key } = useContext(AuthContext);
   const [activeThread, setActiveThread] = useState<IRecord<IThread>>();
   const [threads, setThreads] = useState<IRecord<IThread>[]>([]);
-  const appendContact = useAppendContact();
   async function addThread(value: IThread): Promise<void> {
     const id = await insertThreadInDB(value);
     setThreads([...threads, { value, id }]);
