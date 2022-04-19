@@ -4,6 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { FilesService } from './files.service';
 import { GeneralResolver } from './general.resolver';
 import { MessagesModule } from './modules/messages/messages.module';
 import { SignaturesModule } from './modules/signatures/signatures.module';
@@ -22,6 +23,6 @@ import { ThreadsModule } from './modules/threads/threads.module';
     MessagesModule,
   ],
   controllers: [AppController],
-  providers: [AppService, GeneralResolver],
+  providers: [FilesService, AppService, GeneralResolver],
 })
 export class AppModule {}

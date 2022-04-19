@@ -24,20 +24,16 @@ type Signature {
   balance: Float!
 }
 
-type PacketMeta {
-  dataPath: String!
-  position: Float!
-}
-
 type Message {
   _id: String!
   createdAt: Float!
   updatedAt: Float!
   messageId: String!
   dstAddress: String!
+  dataPath: String!
   packetCount: Float!
   srcAddress: String!
-  data: [PacketMeta!]!
+  packetsOrder: [Int!]!
 }
 
 type Thread {

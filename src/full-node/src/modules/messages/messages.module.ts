@@ -5,6 +5,7 @@ import { Signature, SignatureSchema } from 'src/models/signature.schema';
 import { Message, MessageSchema } from 'src/models/message.schema';
 import { MessagesController } from './messages.controller';
 import { MessagesResolver } from './messages.resolver';
+import { FilesService } from 'src/files.service';
 
 @Module({
   controllers: [MessagesController],
@@ -14,7 +15,7 @@ import { MessagesResolver } from './messages.resolver';
       { name: Signature.name, schema: SignatureSchema },
     ]),
   ],
-  providers: [MessagesResolver],
+  providers: [FilesService, MessagesResolver],
 })
 export class MessagesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

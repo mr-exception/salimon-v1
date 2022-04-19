@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   Message,
@@ -9,11 +9,20 @@ import { Model } from 'mongoose';
 import { Request, Response } from 'express';
 import { SubmitMessageDTO } from './validators';
 import { createEntity } from 'src/models/entity.schema';
+import { FilesService } from 'src/files.service';
+
+export function createMessageShortName(
+  messageId: string,
+  dstAddress: string,
+): string {
+  return `${dstAddress}-${messageId}`;
+}
 
 @Controller('messages')
 export class MessagesController {
   constructor(
     @InjectModel(Message.name) private model: Model<MessageDocument>,
+    private filesService: FilesService,
   ) {}
   @Post('submit')
   async createMessage(
@@ -22,6 +31,7 @@ export class MessagesController {
     @Body() body: SubmitMessageDTO,
   ) {
     const { messageId, data, position, pckCount, dst } = body;
+    const shortName = createMessageShortName(messageId, dst);
     const message = await this.model.findOne({ messageId });
     if (!message) {
       const record = new this.model(
@@ -30,14 +40,17 @@ export class MessagesController {
           srcAddress: req.headers['x-address'],
           packetCount: pckCount,
           messageId,
-          data: [{ position, dataPath: data }],
+          dataPath: shortName,
+          packetsOrder: [position],
         }),
       );
       const result = await record.save();
+      this.filesService.storeMessage(shortName, [data]);
       res.send(messageResponse(result));
       return;
     }
-    message.data.push({ position, dataPath: data });
+    message.packetsOrder.push(position);
+    this.filesService.storeMessage(shortName, [data]);
     message.save();
     res.send(messageResponse(message));
   }
