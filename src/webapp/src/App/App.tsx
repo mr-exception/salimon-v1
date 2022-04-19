@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import MenuItem from "./Components/MenuItem/MenuItem";
 import { FaUsers, FaUser, FaGlobe } from "react-icons/fa";
 import { IoMdSettings, IoMdChatboxes } from "react-icons/io";
@@ -23,7 +23,7 @@ const App: React.FC<IProps> = ({ children }: IProps) => {
   const { address, password } = useContext(AuthContext);
   const [passedAuth, setPassedAuth] = useState(false);
   const [splashing, setSplashing] = useState<boolean>(true);
-  const history = useHistory();
+  const navigate = useNavigate();
   const href = useLocation().pathname;
   let activeSection: string = "chats";
   if (href === "/") {
@@ -68,7 +68,7 @@ const App: React.FC<IProps> = ({ children }: IProps) => {
           IconComponent={IoMdChatboxes}
           caption="chats"
           onClick={() => {
-            history.push("/");
+            navigate("/");
           }}
           isActive={activeSection === "chats"}
         />
@@ -76,7 +76,7 @@ const App: React.FC<IProps> = ({ children }: IProps) => {
           IconComponent={FaUsers}
           caption="contacts"
           onClick={() => {
-            history.push("/contacts");
+            navigate("/contacts");
           }}
           isActive={activeSection === "contacts"}
         />
@@ -84,7 +84,7 @@ const App: React.FC<IProps> = ({ children }: IProps) => {
           IconComponent={FaGlobe}
           caption="hosts"
           onClick={() => {
-            history.push("/hosts");
+            navigate("/hosts");
           }}
           isActive={activeSection === "hosts"}
         />
@@ -92,7 +92,7 @@ const App: React.FC<IProps> = ({ children }: IProps) => {
           IconComponent={FaUser}
           caption="profile"
           onClick={() => {
-            history.push("/profile");
+            navigate("/profile");
           }}
           isActive={activeSection === "profile"}
         />
@@ -100,7 +100,7 @@ const App: React.FC<IProps> = ({ children }: IProps) => {
           IconComponent={IoMdSettings}
           caption="setting"
           onClick={() => {
-            history.push("/setting");
+            navigate("/setting");
           }}
           isActive={activeSection === "setting"}
         />

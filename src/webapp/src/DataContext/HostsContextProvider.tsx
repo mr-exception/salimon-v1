@@ -10,7 +10,6 @@ import {
   IRecord,
   updateHostsIfExists,
 } from "Utils/storage";
-import { WorkersContext } from "WorkersContextProvider";
 
 export interface IHostsContext {
   hosts: IRecord<IHost>[];
@@ -27,48 +26,23 @@ export const HostsContext = createContext<IHostsContext>({
 export const HostsContextProvider: React.FC<{ children: any }> = ({
   children,
 }) => {
-  const { hostsWorker, threadsWorker } = useContext(WorkersContext);
   const [hosts, setHosts] = useState<IRecord<IHost>[]>([]);
   async function addHost(value: IHost): Promise<void> {
     const id = await insertHostInDB(value);
-    hostsWorker.postMessage({
-      action: "update_hosts",
-      payload: [...hosts, { value, id }],
-    });
-    threadsWorker.postMessage({
-      action: "update_hosts",
-      payload: [...hosts, { value, id }],
-    });
     setHosts([...hosts, { value, id }]);
     toast.success("registered to host successfully!");
   }
   async function removeHost(id: IndexableType) {
     await deleteHostFromDB(id);
     const values = await getHostsFromDB();
-    hostsWorker.postMessage({ action: "update_hosts", payload: values });
-    threadsWorker.postMessage({ action: "update_hosts", payload: values });
     setHosts(values);
   }
   useEffect(() => {
     getHostsFromDB().then((value) => {
       setHosts(value);
-      hostsWorker.postMessage({ action: "update_hosts", payload: value });
-      threadsWorker.postMessage({ action: "update_hosts", payload: value });
     });
-  }, [hostsWorker, threadsWorker]);
+  }, []);
 
-  hostsWorker.onmessage = async (
-    ev: MessageEvent<{ event: string; payload: IRecord<IHost>[] }>
-  ) => {
-    const { event, payload } = ev.data;
-    switch (event) {
-      case "hosts":
-        await updateHostsIfExists(payload);
-        const newHosts = await getHostsFromDB();
-        setHosts(newHosts);
-        break;
-    }
-  };
   return (
     <HostsContext.Provider value={{ hosts, addHost, removeHost }}>
       {children}
