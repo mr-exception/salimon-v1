@@ -16,15 +16,15 @@ const Routes = () => {
   return (
     <AuthContextProvider>
       <Router>
-        <RouteBag>
-          <App>
+        <App>
+          <RouteBag>
             <Route path="/hosts" element={<Hosts />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/setting" element={<Setting />} />
             <Route path="/contacts" element={<Contacts />} />
             <Route path="/" element={<Chats />} />
-          </App>
-        </RouteBag>
+          </RouteBag>
+        </App>
       </Router>
     </AuthContextProvider>
   );

@@ -571,7 +571,12 @@ module.exports = function (webpackEnv) {
       ].filter(Boolean),
     },
     plugins: [
-      // Generates an `index.html` file with the <script> injected.
+      new webpack.DefinePlugin({
+        process: { env: {} },
+      }),
+      new webpack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
+      }),
       new HtmlWebpackPlugin(
         Object.assign(
           {},

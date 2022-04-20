@@ -4,10 +4,11 @@ import "react-toastify/dist/ReactToastify.css";
 import Button from "Ui-Kit/Button/Button";
 import TextInput from "Ui-Kit/Inputs/TextInput/TextInput";
 import Key from "Utils/Key";
+import { v4 as uuidV4 } from "uuid";
 
 const InitForm: React.FC = () => {
   const authContext = useContext(AuthContext);
-  const [address, setAddress] = useState<string>();
+  const [address, setAddress] = useState<string>(uuidV4);
   const [password, setPassword] = useState<string>();
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>();
 
@@ -30,42 +31,39 @@ const InitForm: React.FC = () => {
     authContext.setKey(key);
   }
   return (
-    <div className="flex items-center w-full justify-center">
+    <div className="flex items-center justify-center w-full">
       <div className="col-xs-10 col-md-8 col-lg-6">
         <div className="row">
-          <div className="col-xs-12 text-center text-2xl my-2">
+          <div className="my-2 text-2xl text-center col-xs-12">
             Welcome to Salimon!
           </div>
-          <div className="col-xs-12 text-justify text-md my-2">
-            to start using salimon, you need a valid ethereum wallet address to
-            link your account. we recommend using metamask browser extention.
-            everyone in salimon network will know you just by your wallet
-            address, no extra identication required.
+          <div className="my-2 text-justify col-xs-12 text-md">
+            to start using salimon network, you need a valid and unique address
+            in uuid v4 format, it's recommended to not change the autofilled
+            uuid in the text field below.
           </div>
-          <div className="col-xs-12 text-justify text-md my-2">
-            salimon application doesn't need any secret passphrase from your ETH
-            wallet. your wallet does not need to have any balance, we don't have
-            access to your wallet. just make sure you own the entered wallet
-            address, because you have to pay or receive your activity shares
-            with this address. you can't change your wallet address in future.
+          <div className="my-2 text-justify col-xs-12 text-md">
+            you can change your address anytime, but it makes more time in
+            future to notify all clients and network in future about this
+            critical change in your profile.
           </div>
-          <div className="col-xs-12 my-2">
+          <div className="my-2 col-xs-12">
             <TextInput
               placeholder="0x7bd62f48846cd9E370F2AdE8e45bF7Ca9971c1f7"
-              label="Ethereum address"
+              label="Address"
               value={address}
               onChange={(value) => {
                 setAddress(value.toLowerCase());
               }}
             />
           </div>
-          <div className="col-xs-12 text-justify text-md my-2">
+          <div className="my-2 text-justify col-xs-12 text-md">
             you can set an offline password to secure your profile, pay
             attention to security warnings in application to keep your profile
             safe. salimon will ask your password each time you open this page.
             just leave them blank if you are sure that your device is safe.
           </div>
-          <div className="col-xs-12 my-2">
+          <div className="my-2 col-xs-12">
             <div className="row">
               <div className="col-xs-12 col-md-6 col-lg-6">
                 <TextInput
@@ -88,12 +86,12 @@ const InitForm: React.FC = () => {
             </div>
           </div>
           <div
-            className="col-xs-12 text-left text-warning"
+            className="text-left col-xs-12 text-warning"
             style={{ minHeight: 30 }}
           >
             {error}
           </div>
-          <div className="col-xs-12 text-right mt-2">
+          <div className="mt-2 text-right col-xs-12">
             <Button variant="primary" size="md" onClick={submit}>
               Save
             </Button>
