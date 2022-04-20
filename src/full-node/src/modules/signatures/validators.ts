@@ -1,7 +1,8 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateSignatureDTO {
   @IsNotEmpty()
+  @IsUUID()
   address: string;
   @IsNotEmpty()
   name: string;

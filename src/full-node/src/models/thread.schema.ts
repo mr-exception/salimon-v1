@@ -6,12 +6,28 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 export type ThreadDocument = Thread & Document;
 
+interface IMember {
+  address: string;
+  privateKey: string;
+}
+
+@Schema()
+@ObjectType()
+class Member implements IMember {
+  @Prop(String)
+  @Field(() => String)
+  address: string;
+  @Prop(String)
+  @Field(() => String)
+  privateKey: string;
+}
+
 @Schema()
 @ObjectType()
 export class Thread extends Entity implements IThread {
   @Prop([String])
-  @Field(() => [String])
-  members: string[];
+  @Field(() => [Member])
+  members: IMember[];
   @Prop(String)
   @Field()
   name: string;

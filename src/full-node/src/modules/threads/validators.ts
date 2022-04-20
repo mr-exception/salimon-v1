@@ -2,7 +2,10 @@ import { IsMongoId, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateThreadDTO {
   @IsNotEmpty()
-  members: string[];
+  members: {
+    address: string;
+    privateKey: string;
+  }[];
   @IsNotEmpty()
   name: string;
   @IsNotEmpty()
@@ -15,7 +18,10 @@ export class UpdateThreadDTO {
   @IsMongoId()
   id: string;
   @IsNotEmpty()
-  members: string[];
+  members: {
+    address: string;
+    privateKey: string;
+  }[];
   @IsNotEmpty()
   name: string;
   @IsNotEmpty()
