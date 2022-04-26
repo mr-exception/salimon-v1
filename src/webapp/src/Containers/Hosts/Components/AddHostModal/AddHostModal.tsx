@@ -20,7 +20,6 @@ const AddHostModal: React.FC<IProps> = ({ close }: IProps) => {
   const hostsContext = useContext(HostsContext);
   const [address, setAddress] = useState<string>();
   const [heartBeatResult, setHeartBeatResult] = useState<IHeartBeat>();
-  const [responseTime, setResponseTime] = useState(0);
 
   const client = new ApolloClient({
     uri: address + "/graphql",
@@ -43,7 +42,6 @@ const AddHostModal: React.FC<IProps> = ({ close }: IProps) => {
         })
       ).data.heartBeat;
       setHeartBeatResult(result);
-      setResponseTime(Date.now() - time);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -66,7 +64,6 @@ const AddHostModal: React.FC<IProps> = ({ close }: IProps) => {
       const host: IHost = {
         url: address,
         ...heartBeatResult,
-        rt: responseTime,
         secret,
         lastFetched: 0,
       };
@@ -99,9 +96,7 @@ const AddHostModal: React.FC<IProps> = ({ close }: IProps) => {
       </div>
       <div className="col-xs-12" style={{ minHeight: 150 }}>
         <div className="row">
-          {heartBeatResult && (
-            <HeartBeatInfo data={heartBeatResult} responseTime={responseTime} />
-          )}
+          {heartBeatResult && <HeartBeatInfo data={heartBeatResult} />}
           {!!error && (
             <div className="col-xs-12">
               <span className="italic">{error}</span>

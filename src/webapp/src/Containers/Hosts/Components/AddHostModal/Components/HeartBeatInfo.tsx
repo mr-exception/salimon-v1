@@ -4,9 +4,8 @@ import Moment from "moment";
 
 interface IProps {
   data: IHeartBeat;
-  responseTime: number;
 }
-const HeartBeatInfo: React.FC<IProps> = ({ data, responseTime }: IProps) => {
+const HeartBeatInfo: React.FC<IProps> = ({ data }: IProps) => {
   function serviceTime(): string {
     const moment = Moment(data.time * 1000);
     return moment.format("Y/MM/DD HH:mm");
@@ -26,9 +25,6 @@ const HeartBeatInfo: React.FC<IProps> = ({ data, responseTime }: IProps) => {
         </div>
         <div className="text-sm italic col-md-11 col-md-offset-1">
           Packet price: {data.packetPrice} wei for each 1kp
-        </div>
-        <div className="text-sm italic col-md-11 col-md-offset-1">
-          Response time: {responseTime}ms
         </div>
       </div>
     </div>

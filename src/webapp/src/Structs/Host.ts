@@ -4,7 +4,6 @@ import { IHeartBeat } from "datamodels/heartbeat";
 
 export interface IHost extends IHeartBeat {
   url: string;
-  rt: number;
   secret: string;
   lastFetched: number;
 }

@@ -34,7 +34,6 @@ const HostCard: React.FC<IProps> = ({ host, id }: IProps) => {
             }}
           />
         </div>
-        <div className="py-1 col-xs-6">Response time: {host.rt}ms</div>
         <div className="py-1 col-xs-6">
           Commission fee: {host.commissionFee} pk
         </div>
@@ -44,7 +43,7 @@ const HostCard: React.FC<IProps> = ({ host, id }: IProps) => {
         <div className="py-1 col-xs-6">
           Your Subscription: {host.balance} packets
         </div>
-        <div className="py-1 text-right col-xs-6">
+        <div className="py-1 text-right col-xs-12">
           <Button
             size="sm"
             onClick={() => {
