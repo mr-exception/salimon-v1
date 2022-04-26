@@ -11,8 +11,7 @@ export interface IRecord<T> {
 export function initDB(): Dexie {
   const db = new Dexie("salimon");
   db.version(1).stores({
-    hosts:
-      "++id,url,name,commission_fee,subscription_fee,paid_subscription,rt,secret,balance,address,subscription,last_fetched",
+    hosts: "++id,url,name,serviceType,commissionFee,packetPrice,balance,rt",
     contacts: "++id,name,address,public_key,hosts",
     threads: "++id,universal_id,creator,members,key,hosts",
   });

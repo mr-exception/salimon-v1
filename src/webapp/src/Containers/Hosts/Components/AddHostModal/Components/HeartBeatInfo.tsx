@@ -1,7 +1,6 @@
 import React from "react";
-import { IHeartBeat, subscriptionFee } from "Structs/Host";
+import { IHeartBeat } from "datamodels/heartbeat";
 import Moment from "moment";
-import { weiToPweiFixed } from "Utils/currency";
 
 interface IProps {
   data: IHeartBeat;
@@ -15,16 +14,22 @@ const HeartBeatInfo: React.FC<IProps> = ({ data, responseTime }: IProps) => {
   return (
     <div className="col-md-12">
       <div className="row">
-        <div className="col-md-12 font-bold">Host node successfully found!</div>
-        <div className="col-md-11 col-md-offset-1 text-sm italic">Host name: {data.name}</div>
-        <div className="col-md-11 col-md-offset-1 text-sm italic">
-          Contract commission fee: {weiToPweiFixed(data.commission_fee)}
+        <div className="font-bold col-md-12">Host node successfully found!</div>
+        <div className="text-sm italic col-md-11 col-md-offset-1">
+          Host name: {data.name}
         </div>
-        <div className="col-md-11 col-md-offset-1 text-sm italic">Subscription fee: {subscriptionFee(data)}</div>
-        <div className="col-md-11 col-md-offset-1 text-sm italic">Service time: {serviceTime()}</div>
-        <div className="col-md-11 col-md-offset-1 text-sm italic">Balance: {weiToPweiFixed(data.balance)}</div>
-        <div className="col-md-11 col-md-offset-1 text-sm italic">Subscription: {data.subscription} packets</div>
-        <div className="col-md-11 col-md-offset-1 text-sm italic">Response time: {responseTime}ms</div>
+        <div className="text-sm italic col-md-11 col-md-offset-1">
+          Contract commission fee: {data.commissionFee} kp
+        </div>
+        <div className="text-sm italic col-md-11 col-md-offset-1">
+          Service time: {serviceTime()}
+        </div>
+        <div className="text-sm italic col-md-11 col-md-offset-1">
+          Packet price: {data.packetPrice} wei for each 1kp
+        </div>
+        <div className="text-sm italic col-md-11 col-md-offset-1">
+          Response time: {responseTime}ms
+        </div>
       </div>
     </div>
   );

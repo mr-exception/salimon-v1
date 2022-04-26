@@ -1,28 +1,40 @@
 import axios from "axios";
 
-interface ICreateSecretParam {
+interface ICreateSignatureDTO {
+  name: string;
   secret: string;
   address: string;
-  public_key: string;
+  publicKey: string;
 }
-export async function createSignature(baseURL: string, params: ICreateSecretParam): Promise<boolean> {
-  return axios.post("/api/signatures/create", params, { baseURL }).then(() => true);
+export async function createSignature(
+  baseURL: string,
+  params: ICreateSignatureDTO
+): Promise<boolean> {
+  return axios.post("/signatures/create", params, { baseURL }).then(() => true);
 }
 
-interface IUpdateSecretParam {
+interface IUpdateSecretDTO {
   current_secret: string;
   new_secret: string;
   address: string;
   public_key: string;
 }
-export async function updateSecret(baseURL: string, params: IUpdateSecretParam): Promise<boolean> {
-  return axios.post("/api/signatures/update", params, { baseURL }).then(() => true);
+export async function updateSecret(
+  baseURL: string,
+  params: IUpdateSecretDTO
+): Promise<boolean> {
+  return axios.post("/signatures/update", params, { baseURL }).then(() => true);
 }
 
-interface IDestroySecretParam {
+interface IDestroySecretDTO {
   secret: string;
   address: string;
 }
-export async function destroySecret(baseURL: string, params: IDestroySecretParam): Promise<boolean> {
-  return axios.post("/api/signatures/destroy", params, { baseURL }).then(() => true);
+export async function destroySecret(
+  baseURL: string,
+  params: IDestroySecretDTO
+): Promise<boolean> {
+  return axios
+    .delete("/signatures/delete", { baseURL, params })
+    .then(() => true);
 }

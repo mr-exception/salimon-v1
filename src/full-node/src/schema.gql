@@ -11,6 +11,15 @@ type HeartBeat {
 
   """service current time"""
   time: Float!
+
+  """commission fee on each contract (unit: 1kp"""
+  commissionFee: Float!
+
+  """each 1kp price on this node"""
+  packetPrice: Float!
+
+  """balance of requested user"""
+  balance: Float!
 }
 
 type Signature {
@@ -36,26 +45,27 @@ type Message {
   packetsOrder: [Int!]!
 }
 
+type Member {
+  address: String!
+  privateKey: String!
+}
+
 type Thread {
   _id: String!
   createdAt: Float!
   updatedAt: Float!
-  members: [String!]!
+  members: [Member!]!
   name: String!
   threadId: String!
   ownerAddress: String!
 }
 
 type Query {
-  heartBeat: HeartBeat!
+  heartBeat(address: String!): HeartBeat!
   getSignatures(balanceMin: Int, balanceMax: Int, address: String, page: Int = 1, pageSize: Int = 10): [Signature!]!
   getSignaturesCount(balanceMin: Int, balanceMax: Int, address: String): Float!
   getThreads(id: String, threadId: String, ownerAddress: String, member: String, page: Int = 1, pageSize: Int = 10): [Thread!]!
   getThreadsCount(id: String, threadId: String, ownerAddress: String, member: String): Float!
   getMessages(id: String, messageId: String, src: String, dst: String, targetId: String, createdAtMax: Int, createdAtMin: Int, updatedAtMax: Int, updatedAtMin: Int, page: Int = 1, pageSize: Int = 10): [Message!]!
   getMessagesCount(id: String, messageId: String, src: String, dst: String, targetId: String, createdAtMax: Int, createdAtMin: Int, updatedAtMax: Int, updatedAtMin: Int): Float!
-}
-
-type Subscription {
-  timeChanged: Float!
 }

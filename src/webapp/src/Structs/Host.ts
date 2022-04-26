@@ -1,36 +1,19 @@
 import { IAxiosConfigs } from "API/axios-inital";
 import { weiToPweiFixed } from "Utils/currency";
+import { IHeartBeat } from "datamodels/heartbeat";
 
-export interface IHost {
+export interface IHost extends IHeartBeat {
   url: string;
-  address: string;
-  name: string;
-  commission_fee: number;
-  subscription_fee: number;
-  paid_subscription: boolean;
   rt: number;
   secret: string;
-  balance: number;
-  subscription: number;
-  last_fetched: number;
-}
-
-export interface IHeartBeat {
-  name: string;
-  address: string;
-  commission_fee: number;
-  subscription_fee: number;
-  time: number;
-  paid_subscription: boolean;
-  balance: number;
-  subscription: number;
+  lastFetched: number;
 }
 
 export function subscriptionFee(host: IHost | IHeartBeat): string {
-  if (!host.paid_subscription) {
+  if (host.packetPrice === 0) {
     return "free";
   } else {
-    return weiToPweiFixed(host.subscription_fee);
+    return weiToPweiFixed(host.packetPrice);
   }
 }
 

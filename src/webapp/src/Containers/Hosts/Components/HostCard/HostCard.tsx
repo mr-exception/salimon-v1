@@ -18,10 +18,12 @@ const HostCard: React.FC<IProps> = ({ host, id }: IProps) => {
   const { showModal, closeModal } = useContext(ModalsContext);
   return (
     <div className="col-xs-12 col-lg-6">
-      <div className="row border-2 border-solid rounded-md border-base mx-1 p-2">
-        <div className="col-xs-6 py-1">Name: {host.name}</div>
-        <div className="col-xs-6 py-1">Subscription fee: {subscriptionFee(host)}</div>
-        <div className="col-xs-6 py-1 flex">
+      <div className="p-2 mx-1 border-2 border-solid rounded-md row border-base">
+        <div className="py-1 col-xs-6">Name: {host.name}</div>
+        <div className="py-1 col-xs-6">
+          Subscription fee: {subscriptionFee(host)}
+        </div>
+        <div className="flex py-1 col-xs-6">
           Url: {host.url}
           <FaLink
             style={{ marginLeft: 10, marginTop: 6 }}
@@ -32,11 +34,17 @@ const HostCard: React.FC<IProps> = ({ host, id }: IProps) => {
             }}
           />
         </div>
-        <div className="col-xs-6 py-1">Response time: {host.rt}ms</div>
-        <div className="col-xs-6 py-1">Commission fee: {weiToPweiFixed(host.commission_fee)}</div>
-        <div className="col-xs-6 py-1">Your balance: {weiToPweiFixed(host.balance)}</div>
-        <div className="col-xs-6 py-1">Your Subscription: {host.subscription} packets</div>
-        <div className="col-xs-6 py-1 text-right">
+        <div className="py-1 col-xs-6">Response time: {host.rt}ms</div>
+        <div className="py-1 col-xs-6">
+          Commission fee: {weiToPweiFixed(host.commissionFee)} pk
+        </div>
+        <div className="py-1 col-xs-6">
+          Your balance: {weiToPweiFixed(host.balance)}
+        </div>
+        <div className="py-1 col-xs-6">
+          Your Subscription: {host.balance} packets
+        </div>
+        <div className="py-1 text-right col-xs-6">
           <Button
             size="sm"
             onClick={() => {
@@ -54,7 +62,9 @@ const HostCard: React.FC<IProps> = ({ host, id }: IProps) => {
             style={{ marginLeft: 5 }}
             variant="warning"
             onClick={() => {
-              showModal(<RemoveHostModal host={host} hostId={id} close={closeModal} />);
+              showModal(
+                <RemoveHostModal host={host} hostId={id} close={closeModal} />
+              );
             }}
           >
             <FaTrash />

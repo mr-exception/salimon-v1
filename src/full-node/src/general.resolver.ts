@@ -1,20 +1,21 @@
-import { Query, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 import { IHeartBeat } from 'datamodels/heartbeat';
 import { HeartBeat } from './models/hearbeat.schema';
-import { pubsub } from './public-center';
 
 @Resolver(() => HeartBeat)
 export class GeneralResolver {
   @Query(() => HeartBeat)
-  async heartBeat(): Promise<IHeartBeat> {
+  async heartBeat(
+    @Args('address', { type: () => String, nullable: false }) address: string,
+  ): Promise<IHeartBeat> {
+    console.log(address);
     return {
       name: 'full node',
       serviceType: 'full-node',
       time: Math.floor(Date.now() / 1000),
+      packetPrice: 0,
+      commissionFee: 1000,
+      balance: 0,
     };
-  }
-  @Subscription(() => Number)
-  timeChanged() {
-    return pubsub.asyncIterator('timeChanged');
   }
 }
