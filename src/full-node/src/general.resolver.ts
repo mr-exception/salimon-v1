@@ -10,7 +10,7 @@ export class GeneralResolver {
   ): Promise<IHeartBeat> {
     console.log(address);
     return {
-      name: 'full node',
+      name: 'full node (edited name)',
       serviceType: 'full-node',
       time: Math.floor(Date.now() / 1000),
       packetPrice: 0,
