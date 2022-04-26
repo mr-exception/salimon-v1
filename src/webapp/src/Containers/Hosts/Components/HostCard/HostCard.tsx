@@ -36,10 +36,10 @@ const HostCard: React.FC<IProps> = ({ host, id }: IProps) => {
         </div>
         <div className="py-1 col-xs-6">Response time: {host.rt}ms</div>
         <div className="py-1 col-xs-6">
-          Commission fee: {weiToPweiFixed(host.commissionFee)} pk
+          Commission fee: {host.commissionFee} pk
         </div>
         <div className="py-1 col-xs-6">
-          Your balance: {weiToPweiFixed(host.balance)}
+          Your balance: {host.balance + ""} pk
         </div>
         <div className="py-1 col-xs-6">
           Your Subscription: {host.balance} packets
@@ -48,9 +48,9 @@ const HostCard: React.FC<IProps> = ({ host, id }: IProps) => {
           <Button
             size="sm"
             onClick={() => {
-              toast.info("you secret token: " + host.secret, {
+              toast.info("your secret token: " + host.secret, {
                 onClick: () => {
-                  console.log("clicked on toast");
+                  navigator.clipboard.writeText(host.secret);
                 },
               });
             }}

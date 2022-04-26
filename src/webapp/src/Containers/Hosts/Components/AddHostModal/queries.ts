@@ -9,6 +9,7 @@ export const GET_HEARTBEAT = gql`
       time
       packetPrice
       commissionFee
+      balance
     }
   }
 `;

@@ -35,6 +35,9 @@ export async function destroySecret(
   params: IDestroySecretDTO
 ): Promise<boolean> {
   return axios
-    .delete("/signatures/delete", { baseURL, params })
+    .delete("/signatures/delete", {
+      baseURL,
+      headers: { "x-address": params.address, "x-secret": params.secret },
+    })
     .then(() => true);
 }
