@@ -6,4 +6,5 @@ export interface ISignature extends IEntity {
   secret: string;
   balance: number;
   address: string;
+  activeAt: number;
 }

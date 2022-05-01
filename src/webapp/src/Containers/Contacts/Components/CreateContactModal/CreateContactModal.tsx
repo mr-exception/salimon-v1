@@ -1,4 +1,3 @@
-import { checkAddressList } from "API/CheckAddressList";
 import { AxiosError } from "axios";
 import { ContactsContext } from "DataContext/ContactsContextProvider";
 import { IndexableType } from "dexie";
@@ -9,11 +8,15 @@ import { IHost } from "Structs/Host";
 import Button from "Ui-Kit/Button/Button";
 import TextInput from "Ui-Kit/Inputs/TextInput/TextInput";
 import { timestampToDateTime } from "Utils/string";
+import { createClient } from "Utils/graphql";
+import { GET_SIGNATURES, IGetSignatures } from "./queries";
 
 interface ICheckResult {
   result: boolean;
-  public_key: string;
-  active_at: number;
+  publicKey: string;
+  balance: number;
+  name: string;
+  activeAt: number;
   host: { value: IHost; id: IndexableType };
   ts: number;
 }
@@ -31,7 +34,9 @@ const CreateContactModal: React.FC<IProps> = ({ close }: IProps) => {
   const [errors, setErrors] = useState<string[]>([]);
   const [notFound, setNotFound] = useState<boolean>(false);
 
-  const [fetching, setFetching] = useState<"not_fetched" | "fetching" | "fetched">("not_fetched");
+  const [fetching, setFetching] = useState<
+    "not_fetched" | "fetching" | "fetched"
+  >("not_fetched");
   async function fetchRoutes() {
     setFetching("fetching");
     setErrors([]);
@@ -43,35 +48,47 @@ const CreateContactModal: React.FC<IProps> = ({ close }: IProps) => {
           const ts = Date.now();
           if (!address) return false;
           try {
-            const checkResult = await checkAddressList(host.value.url, { addresses: [address] });
-            if (!!checkResult[address]) {
-              return {
-                result: true,
-                host,
-                ts: Date.now() - ts,
-                public_key: (checkResult[address] || {}).public_key,
-                active_at: (checkResult[address] || {}).active_at,
-              };
-            } else {
+            const checkResult = await createClient(
+              host.value.url
+            ).query<IGetSignatures>({
+              query: GET_SIGNATURES,
+              variables: { address },
+            });
+            const result = checkResult.data.getSignatures;
+            if (result.length === 0) {
               return {
                 result: false,
                 host,
                 ts: Date.now() - ts,
               };
+            } else {
+              const signature = result[0];
+              return {
+                result: true,
+                host,
+                ts: Date.now() - ts,
+                publicKey: signature.publicKey,
+                activeAt: signature.activeAt,
+                name: signature.name,
+                balance: signature.balance,
+              };
             }
           } catch (err) {
-            currentErrors.push(`${host.value.url}: ${(err as AxiosError).message}`);
+            currentErrors.push(
+              `${host.value.url}: ${(err as AxiosError).message}`
+            );
           }
         })
-      )) as {
-        result: boolean;
-        public_key?: string;
-        active_at?: number;
-        host: { value: IHost; id: IndexableType };
-        ts: number;
-      }[];
-      setNotFound(!result.reduce<boolean>((cursor, current) => current.result || cursor, false));
-      setFetchResult(result.filter((record) => !!record.result) as ICheckResult[]);
+      )) as ICheckResult[];
+      setNotFound(
+        !result.reduce<boolean>(
+          (cursor, current) => current.result || cursor,
+          false
+        )
+      );
+      setFetchResult(
+        result.filter((record) => !!record.result) as ICheckResult[]
+      );
     } catch (err) {
       console.log(err);
     } finally {
@@ -81,19 +98,21 @@ const CreateContactModal: React.FC<IProps> = ({ close }: IProps) => {
   }
   async function saveContact() {
     if (!name || !address || notFound || !fetchResult) return;
-    let public_key = "none";
-    let active_at: number = -1;
+    let publicKey = "none";
+    let activeAt: number = -1;
     for (let i = 0; i < fetchResult.length; i++) {
-      if (active_at < fetchResult[i].active_at) {
-        public_key = fetchResult[i].public_key;
-        active_at = fetchResult[i].active_at;
+      if (activeAt < fetchResult[i].activeAt) {
+        publicKey = fetchResult[i].publicKey;
       }
     }
     const contact: IContact = {
       name,
       address,
-      public_key,
-      hosts: (fetchResult || []).map((record) => ({ hostId: record.host.id, active_at: record.active_at })),
+      publicKey,
+      hosts: (fetchResult || []).map((record) => ({
+        hostId: record.host.id,
+        activeAt: record.activeAt,
+      })),
     };
     addContact(contact);
     setTimeout(() => {
@@ -102,9 +121,14 @@ const CreateContactModal: React.FC<IProps> = ({ close }: IProps) => {
   }
   return (
     <div className="row">
-      <div className="col-xs-12 font-bold text-lg">Create Contact</div>
+      <div className="text-lg font-bold col-xs-12">Create Contact</div>
       <div className="col-xs-12">
-        <TextInput label="Full name" placeholder="Majid Moshafegh" value={name} onChange={setName} />
+        <TextInput
+          label="Full name"
+          placeholder="Majid Moshafegh"
+          value={name}
+          onChange={setName}
+        />
       </div>
       <div className="col-xs-12">
         <TextInput
@@ -123,14 +147,16 @@ const CreateContactModal: React.FC<IProps> = ({ close }: IProps) => {
               if (result.result) {
                 return (
                   <div key={index} className="col-xs-12">
-                    is registered in {result.host.value.name} ({result.host.value.url}), last activity:
-                    {" " + timestampToDateTime(result.active_at)}!
+                    is registered in {result.host.value.name} (
+                    {result.host.value.url}), last activity:
+                    {" " + timestampToDateTime(result.activeAt)}!
                   </div>
                 );
               } else {
                 return (
                   <div key={index} className="col-xs-12">
-                    not registered in {result.host.value.name} ({result.host.value.url})
+                    not registered in {result.host.value.name} (
+                    {result.host.value.url})
                   </div>
                 );
               }
@@ -144,14 +170,15 @@ const CreateContactModal: React.FC<IProps> = ({ close }: IProps) => {
           {!!notFound && (
             <div className="col-xs-12">
               <span className="italic">
-                this address is not registered in any host from your registered hosts. you can't send any message to
-                this contact with your current host list
+                this address is not registered in any host from your registered
+                hosts. you can't send any message to this contact with your
+                current host list
               </span>
             </div>
           )}
         </div>
       </div>
-      <div className="col-xs-12 text-right">
+      <div className="text-right col-xs-12">
         <Button
           onClick={fetchRoutes}
           variant="primary"
@@ -162,11 +189,21 @@ const CreateContactModal: React.FC<IProps> = ({ close }: IProps) => {
           Fetch Routes
         </Button>
         {!notFound && fetching === "fetched" && (
-          <Button onClick={saveContact} variant="primary" size="sm" style={{ marginRight: 10, minWidth: 130 }}>
+          <Button
+            onClick={saveContact}
+            variant="primary"
+            size="sm"
+            style={{ marginRight: 10, minWidth: 130 }}
+          >
             Save
           </Button>
         )}
-        <Button onClick={close} variant="warning" size="sm" style={{ minWidth: 80 }}>
+        <Button
+          onClick={close}
+          variant="warning"
+          size="sm"
+          style={{ minWidth: 80 }}
+        >
           Cancel
         </Button>
       </div>

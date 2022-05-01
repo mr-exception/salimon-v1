@@ -55,7 +55,7 @@ function generateQuery(
 ) {
   let queryInstance = new MonoQuery();
   if (member) {
-    queryInstance = queryInstance.where('members').equals(member);
+    queryInstance = queryInstance.where('members.address').equals(member);
   }
   if (threadId) {
     queryInstance = queryInstance.where('threadId').equals(threadId);

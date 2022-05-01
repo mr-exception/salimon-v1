@@ -1,5 +1,5 @@
+import { Axios } from "axios";
 import { IPacket } from "Structs/Packet";
-import { createAxios, IAxiosConfigs } from "./axios-inital";
 
 interface ISendPacketParams {
   dst: string;
@@ -10,9 +10,9 @@ interface ISendPacketParams {
 }
 export async function sendPacket(
   params: ISendPacketParams,
-  configs: IAxiosConfigs
+  axios: Axios
 ): Promise<IPacket> {
-  return createAxios(configs)
+  return axios
     .post<IPacket>("api/packets/send", params)
     .then((response) => response.data);
 }
@@ -31,9 +31,9 @@ interface IFetchPacketsParam {
 }
 export async function fetchPackets(
   params: IFetchPacketsParam,
-  configs: IAxiosConfigs
+  axios: Axios
 ): Promise<IPacket[]> {
-  return createAxios(configs)
+  return axios
     .get<{ data: IPacket[] }>("/packets/fetch", { params })
     .then((response) => response.data.data);
 }

@@ -67,10 +67,10 @@ export function useGetContact(address?: string): IRecord<IContact> | undefined {
 }
 export function useAppendContact(): (
   address: string,
-  public_key: string
+  publicKey: string
 ) => void {
   const { contacts, addContact } = useContext(ContactsContext);
-  return function append(address: string, public_key: string): void {
+  return function append(address: string, publicKey: string): void {
     let found = false;
     for (let i = 0; i < contacts.length; i++) {
       if (contacts[i].value.address === address) {
@@ -83,7 +83,7 @@ export function useAppendContact(): (
         address,
         name: address,
         hosts: [],
-        public_key,
+        publicKey,
       });
     }
   };

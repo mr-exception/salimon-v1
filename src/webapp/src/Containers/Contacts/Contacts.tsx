@@ -1,6 +1,7 @@
 import { ContactsContext } from "DataContext/ContactsContextProvider";
 import { ModalsContext } from "Modals/ModalsContextProvider";
 import { useContext, useState } from "react";
+import { FaPlus } from "react-icons/fa";
 import { IContact } from "Structs/Contact";
 import Button from "Ui-Kit/Button/Button";
 import { IRecord } from "Utils/storage";
@@ -19,10 +20,10 @@ const Contacts = () => {
   }
   if (contacts.length === 0) {
     return (
-      <div className="col-xs-12 h-full">
-        <div className="row justify-center h-full items-center">
+      <div className="h-full col-xs-12">
+        <div className="items-center justify-center h-full row">
           <div
-            className="col-xs-10 col-md-6 col-lg-4 bg-primary p-4 rounded-lg text-center flex flex-col justify-center items-center"
+            className="flex flex-col items-center justify-center p-4 text-center rounded-lg col-xs-10 col-md-6 col-lg-4 bg-primary"
             style={{ minHeight: 120 }}
           >
             <span className="text-xl">you don't have any contact.</span>
@@ -42,7 +43,7 @@ const Contacts = () => {
   }
   return (
     <div className="col-xs-12">
-      <div className="row flex flex-row p-2 justify-center items-center">
+      <div className="flex flex-row items-center justify-center p-2 row">
         <input
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -50,12 +51,12 @@ const Contacts = () => {
           placeholder="search in contacts..."
         />
         <button
-          className={Styles.searchAdd}
+          className="flex flex-1 max-w-[45px] hover:bg-primary rounded-md justify-center items-center mx-2 min-h-[35px]"
           onClick={() => {
             showModal(<CreateContactModal close={closeModal} />, "md");
           }}
         >
-          <img src="/img/add.svg" alt="add" />
+          <FaPlus />
         </button>
       </div>
       <div className="row">

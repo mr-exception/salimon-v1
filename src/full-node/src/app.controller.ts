@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { pubsub } from './public-center';
+import { pubsub } from './publish-center';
 
 @Controller()
 export class AppController {
@@ -8,7 +8,6 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    pubsub.publish('timeChanged', { timeChanged: Date.now() });
     return this.appService.getHello();
   }
 }

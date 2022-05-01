@@ -1,6 +1,6 @@
 import React from "react";
 import { FaTrash } from "react-icons/fa";
-import { IThread } from "Structs/Thread";
+import { IThread } from "datamodels/thread";
 import { IRecord } from "Utils/storage";
 interface IProps {
   thread: IRecord<IThread>;
@@ -36,7 +36,7 @@ const ThreadCard: React.FC<IProps> = ({ thread, onSelected }) => {
         <div className="col-xs-10">
           <div className="row">
             <div className="overflow-hidden text-lg font-bold col-xs-12 overflow-ellipsis whitespace-nowrap">
-              {thread.value.universal_id}
+              {thread.value.name}
             </div>
             <div className="col-xs-12">Hey! how you doin?</div>
           </div>

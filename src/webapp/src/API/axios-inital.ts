@@ -1,17 +1,15 @@
 import axios, { Axios } from "axios";
-
-export interface IAxiosConfigs {
-  baseUrl: string;
-  address: string;
-  secret: string;
-}
-export function createAxios(configs: IAxiosConfigs): Axios {
+export function createAxios(
+  baseURL: string,
+  address: string,
+  secret: string
+): Axios {
   return axios.create({
-    baseURL: configs.baseUrl,
+    baseURL,
     headers: {
       accept: "application/json",
-      "x-address": configs.address,
-      "x-secret": configs.secret,
+      "x-address": address,
+      "x-secret": secret,
     },
   });
 }

@@ -3,9 +3,9 @@ import { IndexableType } from "dexie";
 export interface IContact {
   address: string;
   name: string;
-  public_key: string;
+  publicKey: string;
   hosts: {
     hostId: IndexableType;
-    active_at: number;
+    activeAt: number;
   }[];
 }

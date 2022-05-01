@@ -1,7 +1,7 @@
 import Dexie, { IndexableType, Table } from "dexie";
-import { IThread } from "Structs/Thread";
 import { IContact } from "Structs/Contact";
 import { IHost } from "Structs/Host";
+import { IThreadStorage } from "Structs/Thread";
 
 export interface IRecord<T> {
   value: T;
@@ -12,8 +12,8 @@ export function initDB(): Dexie {
   const db = new Dexie("salimon");
   db.version(1).stores({
     hosts: "++id,url,name,serviceType,commissionFee,packetPrice,balance",
-    contacts: "++id,name,address,public_key,hosts",
-    threads: "++id,universal_id,creator,members,key,hosts",
+    contacts: "++id,name,address,publicKey,hosts",
+    threads: "++id,universalId,creator,members,key,hosts",
   });
   return db;
 }
@@ -111,20 +111,20 @@ export async function updateContactInDB(id: IndexableType, contact: IContact) {
 // ------------------------------------------------------------------------------------------------------
 // threads
 // ------------------------------------------------------------------------------------------------------
-export function getThreadsTable(): Table<IThread, IndexableType> {
+export function getThreadsTable(): Table<IThreadStorage, IndexableType> {
   const db = initDB();
-  return db.table<IThread>("threads");
+  return db.table<IThreadStorage>("threads");
 }
 
 export async function getThreadsFromDB(): Promise<
-  { value: IThread; id: IndexableType }[]
+  { value: IThreadStorage; id: IndexableType }[]
 > {
   const table = getThreadsTable();
   const keys = await table.toCollection().primaryKeys();
   return await Promise.all(
     keys.map(
       (key) =>
-        new Promise<{ value: IThread; id: IndexableType }>(
+        new Promise<{ value: IThreadStorage; id: IndexableType }>(
           async (resolve, reject) => {
             const record = await table.get(key);
             if (!record) return reject(`thread with key ${key} not found`);
@@ -135,7 +135,7 @@ export async function getThreadsFromDB(): Promise<
   );
 }
 
-export async function insertThreadInDB(value: IThread) {
+export async function insertThreadInDB(value: IThreadStorage) {
   const table = getThreadsTable();
   return table.add(value);
 }
@@ -145,7 +145,10 @@ export async function deleteThreadFromDB(id: IndexableType) {
   return table.delete(id);
 }
 
-export async function updateThreadInDB(id: IndexableType, contact: IThread) {
+export async function updateThreadInDB(
+  id: IndexableType,
+  contact: IThreadStorage
+) {
   const table = getThreadsTable();
   return table.update(id, contact);
 }

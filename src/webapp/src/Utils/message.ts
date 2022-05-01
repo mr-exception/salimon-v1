@@ -9,6 +9,7 @@ import { v4 as uuidV4 } from "uuid";
 import Key from "Utils/Key";
 import { sendPacket } from "API/Packets";
 import { IHost } from "Structs/Host";
+import { createAxios } from "API/axios-inital";
 
 export function createMessageData(
   data: string,
@@ -103,11 +104,7 @@ export async function sendMessage(
             data: packet.data,
             position: packet.position,
           },
-          {
-            baseUrl: relatedHosts[0].url,
-            address: src,
-            secret: relatedHosts[0].secret,
-          }
+          createAxios(relatedHosts[0].url, src, relatedHosts[0].secret)
         )
           .then(resolve)
           .catch(reject);

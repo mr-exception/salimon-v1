@@ -1,4 +1,3 @@
-import { registerChannel } from "API/Channels";
 import { ContactsContext } from "DataContext/ContactsContextProvider";
 import { useRelatedHosts } from "DataContext/HostsContextProvider";
 import React, { useContext, useState } from "react";
@@ -9,9 +8,10 @@ import Key, { encryptWithPublic } from "Utils/Key";
 import { IRecord } from "Utils/storage";
 import ContactCard from "./Component/ContactCard/ContactCard";
 import { v4 as uuidV4 } from "uuid";
-import { createAxiosConfig } from "Structs/Host";
 import { AuthContext } from "AuthContextProvider";
 import { ThreadsContext } from "DataContext/ThreadsContextProvider";
+import { createThread } from "API/Threads";
+import { createAxios } from "API/axios-inital";
 
 interface IProps {
   close: () => void;
@@ -35,27 +35,32 @@ const CreateThreadModal: React.FC<IProps> = ({ close }: IProps) => {
     setCreating(true);
     const channelKey = Key.generateFreshKey();
     const channelPrivateKey = channelKey.getPrivateKey();
-    const universal_id = uuidV4();
+    const threadId = uuidV4();
+    const keyCipherForContact = encryptWithPublic(
+      channelPrivateKey,
+      selectedContact.value.publicKey
+    );
+    const keyCipherForMe = key.encryptPublic(channelPrivateKey);
     const promises = relatedHosts.map(
       (host) =>
         new Promise<void>(async (resolve, reject) => {
           try {
-            const keyCipherForContact = encryptWithPublic(
-              channelPrivateKey,
-              selectedContact.value.public_key
-            );
-            await registerChannel(
-              universal_id,
-              keyCipherForContact,
-              selectedContact.value.address,
-              createAxiosConfig(address, host)
-            );
-            const keyCipherForMe = key.encryptPublic(channelPrivateKey);
-            await registerChannel(
-              universal_id,
-              keyCipherForMe,
-              address,
-              createAxiosConfig(address, host)
+            await createThread(
+              {
+                name: "some name",
+                threadId,
+                members: [
+                  {
+                    address,
+                    privateKey: keyCipherForMe,
+                  },
+                  {
+                    address: selectedContact.value.address,
+                    privateKey: keyCipherForContact,
+                  },
+                ],
+              },
+              createAxios(host.url, address, host.secret)
             );
             resolve();
           } catch (error) {
@@ -65,11 +70,20 @@ const CreateThreadModal: React.FC<IProps> = ({ close }: IProps) => {
     );
     await Promise.allSettled(promises);
     addThread({
-      creator: address,
-      members: [address, selectedContact.value.address],
-      universal_id,
-      key: channelKey.getPrivateKey(),
+      _id: "",
+      threadId,
+      ownerAddress: address,
+      members: [
+        { address, privateKey: channelPrivateKey },
+        {
+          address: selectedContact.value.address,
+          privateKey: keyCipherForContact,
+        },
+      ],
+      name: selectedContact.value.name,
       hosts: selectedContact.value.hosts.map((record) => record.hostId),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     });
     setCreating(false);
     setTimeout(() => {
@@ -78,7 +92,7 @@ const CreateThreadModal: React.FC<IProps> = ({ close }: IProps) => {
   }
   return (
     <div className="row">
-      <div className="col-xs-12 font-bold text-lg">Create Thread</div>
+      <div className="text-lg font-bold col-xs-12">Create Thread</div>
       <div className="col-xs-12">
         <div className="row">
           {contacts.map((contact) => (
@@ -95,7 +109,7 @@ const CreateThreadModal: React.FC<IProps> = ({ close }: IProps) => {
           ))}
         </div>
       </div>
-      <div className="col-xs-12 text-right">
+      <div className="text-right col-xs-12">
         <Button variant="warning" style={{ marginRight: 10 }} onClick={close}>
           Cancel
         </Button>

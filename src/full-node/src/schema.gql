@@ -22,29 +22,6 @@ type HeartBeat {
   balance: Float!
 }
 
-type Signature {
-  _id: String!
-  createdAt: Float!
-  updatedAt: Float!
-  address: String!
-  publicKey: String!
-  name: String!
-  secret: String!
-  balance: Float!
-}
-
-type Message {
-  _id: String!
-  createdAt: Float!
-  updatedAt: Float!
-  messageId: String!
-  dstAddress: String!
-  dataPath: String!
-  packetCount: Float!
-  srcAddress: String!
-  packetsOrder: [Int!]!
-}
-
 type Member {
   address: String!
   privateKey: String!
@@ -60,6 +37,35 @@ type Thread {
   ownerAddress: String!
 }
 
+type Update {
+  type: String!
+  thread: Thread
+}
+
+type Signature {
+  _id: String!
+  createdAt: Float!
+  updatedAt: Float!
+  address: String!
+  publicKey: String!
+  name: String!
+  secret: String!
+  balance: Float!
+  activeAt: Float!
+}
+
+type Message {
+  _id: String!
+  createdAt: Float!
+  updatedAt: Float!
+  messageId: String!
+  dstAddress: String!
+  dataPath: String!
+  packetCount: Float!
+  srcAddress: String!
+  packetsOrder: [Int!]!
+}
+
 type Query {
   heartBeat(address: String!): HeartBeat!
   getSignatures(balanceMin: Int, balanceMax: Int, address: String, page: Int = 1, pageSize: Int = 10): [Signature!]!
@@ -68,4 +74,8 @@ type Query {
   getThreadsCount(id: String, threadId: String, ownerAddress: String, member: String): Float!
   getMessages(id: String, messageId: String, src: String, dst: String, targetId: String, createdAtMax: Int, createdAtMin: Int, updatedAtMax: Int, updatedAtMin: Int, page: Int = 1, pageSize: Int = 10): [Message!]!
   getMessagesCount(id: String, messageId: String, src: String, dst: String, targetId: String, createdAtMax: Int, createdAtMin: Int, updatedAtMax: Int, updatedAtMin: Int): Float!
+}
+
+type Subscription {
+  subToUpdates(address: String!): Update!
 }

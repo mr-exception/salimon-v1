@@ -15,17 +15,17 @@ interface IMember {
 @ObjectType()
 class Member implements IMember {
   @Prop(String)
-  @Field(() => String)
+  @Field()
   address: string;
   @Prop(String)
-  @Field(() => String)
+  @Field()
   privateKey: string;
 }
 
 @Schema()
 @ObjectType()
 export class Thread extends Entity implements IThread {
-  @Prop([String])
+  @Prop([Member])
   @Field(() => [Member])
   members: IMember[];
   @Prop(String)

@@ -5,11 +5,11 @@ import { AuthContext } from "AuthContextProvider";
 import { sendMessage } from "Utils/message";
 import { HostsContext } from "DataContext/HostsContextProvider";
 import { IRecord } from "Utils/storage";
-import { IThread } from "Structs/Thread";
+import { IThreadStorage } from "Structs/Thread";
 import Key from "Utils/Key";
 
 interface IProps {
-  activeThread: IRecord<IThread>;
+  activeThread: IRecord<IThreadStorage>;
 }
 const SendBox: FC<IProps> = ({ activeThread }) => {
   const [text, setText] = useState<string>();
@@ -22,10 +22,13 @@ const SendBox: FC<IProps> = ({ activeThread }) => {
       const relatedHosts = hosts.filter((host) =>
         activeThread.value.hosts.includes(host.id)
       );
-      const channelKey = Key.generateKeyByPrivateKey(activeThread.value.key);
+      const channelKey = Key.generateKeyByPrivateKey(
+        activeThread.value.members.find((item) => item.address === address)
+          ?.privateKey || ""
+      );
       await sendMessage(
         address,
-        activeThread.value.universal_id,
+        activeThread.value.threadId,
         channelKey,
         text,
         relatedHosts.map((record) => record.value),
