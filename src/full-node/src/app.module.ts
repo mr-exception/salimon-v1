@@ -16,6 +16,9 @@ import { ThreadsModule } from './modules/threads/threads.module';
       driver: ApolloDriver,
       autoSchemaFile: 'src/schema.gql',
       installSubscriptionHandlers: true,
+      subscriptions: {
+        'graphql-ws': true,
+      },
     }),
     MongooseModule.forRoot('mongodb://localhost:27017/salimon'),
     SignaturesModule,

@@ -10,6 +10,8 @@ import {
 } from "react";
 import { toast } from "react-toastify";
 import { IContact } from "Structs/Contact";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { createClient } from "graphql-ws";
 import { IHost } from "Structs/Host";
 import {
   deleteHostFromDB,
@@ -24,6 +26,8 @@ import {
   ISubToUpdates,
   SUB_TO_UPDATES,
 } from "./queries";
+import { ThreadsContext } from "./ThreadsContextProvider";
+import { IThreadStorage } from "Structs/Thread";
 
 export interface IHostsContext {
   hosts: IRecord<IHost>[];
@@ -45,6 +49,7 @@ export const HostsContextProvider: React.FC<{ children: any }> = ({
   children,
 }) => {
   const { address } = useContext(AuthContext);
+  const { addThread, threads } = useContext(ThreadsContext);
   const [hosts, setHosts] = useState<IRecord<IHost>[]>([]);
 
   // add the heartbeat watch query to the list
@@ -52,12 +57,12 @@ export const HostsContextProvider: React.FC<{ children: any }> = ({
     async (host: IHost, id: IndexableType) => {
       if (fetchingHosts.includes(id)) return;
       fetchingHosts = [id, ...fetchingHosts];
-      const client = new ApolloClient({
+      const queryClient = new ApolloClient({
         uri: host.url + "/graphql",
         cache: new InMemoryCache(),
       });
       try {
-        const result = await client.query<IGetUpdates>({
+        const result = await queryClient.query<IGetUpdates>({
           query: GET_UPDATES,
           variables: { address, pageSize: 100, page: 1 },
         });
@@ -70,15 +75,47 @@ export const HostsContextProvider: React.FC<{ children: any }> = ({
             return record;
           })
         );
-        const totalThreadsCount = result.data.getThreadsCount;
-        console.log("threads count:", totalThreadsCount);
-        client
+
+        const subscribeClient = new ApolloClient({
+          link: new GraphQLWsLink(
+            createClient({
+              url: host.url.replace(/http|https/, "ws") + "/graphql",
+            })
+          ),
+          cache: new InMemoryCache(),
+        });
+        subscribeClient
           .subscribe<ISubToUpdates>({
             query: SUB_TO_UPDATES,
             variables: { address },
           })
           .subscribe((response) => {
-            console.log(response);
+            const data = response.data;
+            if (data) {
+              const { subToUpdates: update } = data;
+              switch (update.type) {
+                case "threadCreated":
+                  if (!!update.thread) {
+                    const threadStorage: IThreadStorage = {
+                      ...update.thread,
+                      hosts: [id],
+                    };
+                    if (
+                      !threads.find(
+                        (thread) => thread.value._id === threadStorage._id
+                      )
+                    ) {
+                      addThread(threadStorage);
+                    }
+                  }
+                  break;
+                case "threadUpdated":
+                case "threadRemoved":
+                case "newMessage":
+                default:
+                  console.log(update);
+              }
+            }
           });
       } catch (error) {
         console.error(error);

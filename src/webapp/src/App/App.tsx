@@ -105,16 +105,16 @@ const App: React.FC<IProps> = ({ children }: IProps) => {
           isActive={activeSection === "setting"}
         />
       </div>
-      <HostsContextProvider>
-        <ContactsContextProvider>
-          <ThreadsContextProvider>
+      <ThreadsContextProvider>
+        <HostsContextProvider>
+          <ContactsContextProvider>
             <ModalsContextProvider>
               <div className={Styles.children}>{children}</div>
               <ModalContainer />
             </ModalsContextProvider>
-          </ThreadsContextProvider>
-        </ContactsContextProvider>
-      </HostsContextProvider>
+          </ContactsContextProvider>
+        </HostsContextProvider>
+      </ThreadsContextProvider>
       <ToastContainer
         bodyStyle={{ maxWidth: "90%", wordBreak: "break-all" }}
         position="top-center"
@@ -123,6 +123,7 @@ const App: React.FC<IProps> = ({ children }: IProps) => {
         newestOnTop={true}
         theme="colored"
         draggable={false}
+        pauseOnFocusLoss={false}
         closeOnClick={false}
       />
     </div>

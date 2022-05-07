@@ -21,11 +21,11 @@ export class GeneralResolver {
   }
   @Subscription(() => Update, {
     filter: (payload, variables) => {
-      switch (payload.update.type) {
+      switch (payload.subToUpdates.type) {
         case 'threadCreated':
         case 'threadUpdated':
         case 'threadRemoved':
-          return !!payload.update.thread.members.find(
+          return !!payload.subToUpdates.thread.members.find(
             (item) => item.address === variables.address,
           );
         default:
@@ -38,6 +38,6 @@ export class GeneralResolver {
     address: string,
   ) {
     console.log(address, 'subscribed to updates');
-    return pubsub.asyncIterator('update');
+    return pubsub.asyncIterator('subToUpdates');
   }
 }

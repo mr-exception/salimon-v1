@@ -35,7 +35,7 @@ export const ThreadsContextProvider: React.FC<{ children: any }> = ({
   async function addThread(value: IThreadStorage): Promise<void> {
     const id = await insertThreadInDB(value);
     setThreads([...threads, { value, id }]);
-    toast.success("channel created!");
+    toast.success("thread created!");
   }
   async function removeThread(id: IndexableType) {
     await deleteThreadFromDB(id);

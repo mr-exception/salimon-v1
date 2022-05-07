@@ -34,6 +34,7 @@ export class SignaturesController {
         publicKey,
         name,
         secret: createHash('md5').update(secret).digest('base64'),
+        activeAt: Math.ceil(Date.now() / 1000),
       }),
     );
     const result = await record.save();
@@ -53,6 +54,7 @@ export class SignaturesController {
     signature.secret = createHash('md5').update(body.secret).digest('base64');
     signature.publicKey = body.publicKey;
     signature.name = body.name;
+    signature.activeAt = Math.ceil(Date.now() / 1000);
     await signature.save();
     return signatureResponse(signature);
   }

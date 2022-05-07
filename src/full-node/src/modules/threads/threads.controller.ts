@@ -9,6 +9,7 @@ import { Model } from 'mongoose';
 import { Request, Response } from 'express';
 import { CreateThreadDTO, UpdateThreadDTO } from './validators';
 import { createEntity } from 'src/models/entity.schema';
+import { pubsub } from 'src/publish-center';
 
 @Controller('threads')
 export class ThreadsController {
@@ -33,6 +34,9 @@ export class ThreadsController {
       }),
     );
     const result = await record.save();
+    pubsub.publish('subToUpdates', {
+      subToUpdates: { type: 'threadCreated', thread: threadResponse(result) },
+    });
     res.send(threadResponse(result));
   }
   @Post('update')
