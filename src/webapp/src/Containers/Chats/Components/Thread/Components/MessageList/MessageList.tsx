@@ -11,15 +11,20 @@ import MessageBox from "./Components/MessageBox/MessageBox";
 import { createAxios } from "API/axios-inital";
 const MessageList = () => {
   const { activeThread } = useContext(ThreadsContext);
-  const { address } = useContext(AuthContext);
+  const { address, key } = useContext(AuthContext);
   const { hosts } = useContext(HostsContext);
   const [messages, setMessages] = useState<IMessage[]>([]);
+  const [threadKey, setThreadKey] = useState<Key>();
   useEffect(() => {
     if (!activeThread) return;
-    const key = Key.generateKeyByPrivateKey(
-      activeThread.value.members.find((item) => item.address === address)
-        ?.privateKey || ""
-    );
+    const privateKeyString = key
+      .decryptPrivate(
+        activeThread.value.members.find((item) => item.address === address)
+          ?.privateKey || ""
+      )
+      .toString();
+    const generatedThreadKey = Key.generateKeyByPrivateKey(privateKeyString);
+    setThreadKey(generatedThreadKey);
     fetchPackets(
       { thread: activeThread.value.threadId },
       createAxios(hosts[0].value.url, address, hosts[0].value.secret)
@@ -27,7 +32,7 @@ const MessageList = () => {
       const result = packetsToMessages(packets, key);
       setMessages(result.map((record) => record));
     });
-  }, [activeThread, address, hosts]);
+  }, [activeThread, address, hosts, key]);
   return (
     <div className={Styles.messageList}>
       {messages.map((message, index) => (
