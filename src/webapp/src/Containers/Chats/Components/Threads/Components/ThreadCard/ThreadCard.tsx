@@ -7,24 +7,6 @@ interface IProps {
   onSelected: () => void;
 }
 const ThreadCard: React.FC<IProps> = ({ thread, onSelected }) => {
-  // console.log(thread.value);
-  // const contactsAddress = thread.value.members.find(
-  //   (record) => record !== address
-  // );
-  // const contact = useGetContact(contactsAddress);
-
-  // if (!contact) {
-  //   return (
-  //     <div
-  //       className={
-  //         "col-xs-12 cursor-pointer rounded-md hover:bg-secondary transition-all"
-  //       }
-  //       onClick={() => {}}
-  //     >
-  //       test
-  //     </div>
-  //   );
-  // }
   return (
     <div
       className={

@@ -23,6 +23,11 @@ export class GeneralResolver {
     filter: (payload, variables) => {
       switch (payload.subToUpdates.type) {
         case 'threadCreated':
+          return (
+            !!payload.subToUpdates.thread.members.find(
+              (item) => item.address === variables.address,
+            ) && payload.subToUpdates.thread.ownerAddress !== variables.address
+          );
         case 'threadUpdated':
         case 'threadRemoved':
           return !!payload.subToUpdates.thread.members.find(

@@ -12,6 +12,7 @@ import { AuthContext } from "AuthContextProvider";
 import { ThreadsContext } from "DataContext/ThreadsContextProvider";
 import { createThread } from "API/Threads";
 import { createAxios } from "API/axios-inital";
+import TextInput from "Ui-Kit/Inputs/TextInput/TextInput";
 
 interface IProps {
   close: () => void;
@@ -21,6 +22,7 @@ const CreateThreadModal: React.FC<IProps> = ({ close }: IProps) => {
   const { address, key } = useContext(AuthContext);
   const { addThread } = useContext(ThreadsContext);
   const [selectedContact, setSelectedContact] = useState<IRecord<IContact>>();
+  const [name, setName] = useState<string>("");
   const relatedHosts = useRelatedHosts(selectedContact?.value);
 
   const [creating, setCreating] = useState<boolean>(false);
@@ -47,7 +49,7 @@ const CreateThreadModal: React.FC<IProps> = ({ close }: IProps) => {
           try {
             await createThread(
               {
-                name: "some name",
+                name,
                 threadId,
                 members: [
                   {
@@ -80,7 +82,7 @@ const CreateThreadModal: React.FC<IProps> = ({ close }: IProps) => {
           privateKey: keyCipherForContact,
         },
       ],
-      name: selectedContact.value.name,
+      name: name,
       hosts: selectedContact.value.hosts.map((record) => record.hostId),
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -93,6 +95,9 @@ const CreateThreadModal: React.FC<IProps> = ({ close }: IProps) => {
   return (
     <div className="row">
       <div className="text-lg font-bold col-xs-12">Create Thread</div>
+      <div className="col-xs-12">
+        <TextInput label="thread title" value={name} onChange={setName} />
+      </div>
       <div className="col-xs-12">
         <div className="row">
           {contacts.map((contact) => (

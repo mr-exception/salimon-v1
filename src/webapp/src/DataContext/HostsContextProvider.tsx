@@ -102,7 +102,8 @@ export const HostsContextProvider: React.FC<{ children: any }> = ({
                     };
                     if (
                       !threads.find(
-                        (thread) => thread.value._id === threadStorage._id
+                        (thread) =>
+                          thread.value.threadId === threadStorage.threadId
                       )
                     ) {
                       addThread(threadStorage);

@@ -33,6 +33,7 @@ export const ThreadsContextProvider: React.FC<{ children: any }> = ({
   const [activeThread, setActiveThread] = useState<IRecord<IThreadStorage>>();
   const [threads, setThreads] = useState<IRecord<IThreadStorage>[]>([]);
   async function addThread(value: IThreadStorage): Promise<void> {
+    console.log(value, threads);
     const id = await insertThreadInDB(value);
     setThreads([...threads, { value, id }]);
     toast.success("thread created!");
