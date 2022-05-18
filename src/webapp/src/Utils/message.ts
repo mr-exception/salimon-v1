@@ -1,19 +1,14 @@
-import {
-  IMessage,
-  IMessageData,
-  IPacketGroup,
-  MessageType,
-} from "Structs/Message";
 import { IPacket } from "Structs/Packet";
 import { v4 as uuidV4 } from "uuid";
 import Key from "Utils/Key";
 import { sendPacket } from "API/Packets";
 import { IHost } from "Structs/Host";
 import { createAxios } from "API/axios-inital";
+import { IMessageData, MessageType } from "datamodels/message";
 
 export function createMessageData(
   data: string,
-  type: MessageType = "text"
+  type: MessageType = "Text"
 ): IMessageData {
   return {
     data,
@@ -60,21 +55,20 @@ export function messageToPackets(
   cipher: string,
   src: string,
   dst: string,
-  msg_id: string
+  messageId: string
 ): IPacket[] {
   const result: IPacket[] = [];
   let offset = 0;
   let position = 0;
-  const msg_count = Math.ceil(cipher.length / packetDataLenght);
+  const pckCount = Math.ceil(cipher.length / packetDataLenght);
   while (offset < cipher.length) {
     result.push({
       src,
       dst,
-      msg_count,
+      pckCount,
       position,
       data: cipher.substring(offset, offset + packetDataLenght),
-      msg_id,
-      created_at: Date.now() / 1000,
+      messageId,
     });
     offset += packetDataLenght;
     position += 1;
@@ -88,7 +82,7 @@ export async function sendMessage(
   key: Key,
   data: string,
   relatedHosts: IHost[],
-  type: MessageType = "text"
+  type: MessageType = "Text"
 ): Promise<void> {
   const messageData = createMessageData(data, type);
   const cipher = key.encryptPublic(JSON.stringify(messageData));
@@ -98,8 +92,8 @@ export async function sendMessage(
       return new Promise((resolve, reject) => {
         sendPacket(
           {
-            msg_count: packet.msg_count,
-            msg_id: packet.msg_id,
+            pckCount: packet.pckCount,
+            messageId: packet.messageId,
             dst: packet.dst,
             data: packet.data,
             position: packet.position,
@@ -113,55 +107,52 @@ export async function sendMessage(
   );
 }
 
-export function groupPacketsByMessage(packets: IPacket[]): IPacketGroup[] {
-  const result: IPacketGroup[] = [];
-  for (let i = 0; i < packets.length; i++) {
-    let found = false;
-    for (let j = 0; j < result.length; j++) {
-      // console.log(result[i]);
-      if (packets[i].msg_id === result[j].id) {
-        result[j].packets.push(packets[i]);
-        if (result[j].date > packets[i].created_at) {
-          result[j].date = packets[i].created_at;
-        }
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      result.push({
-        packets: [packets[i]],
-        src: packets[i].src,
-        dst: packets[i].dst,
-        id: packets[i].msg_id,
-        count: packets[i].msg_count,
-        date: packets[i].created_at,
-      });
-    }
-  }
-  return result;
-}
+// export function groupPacketsByMessage(packets: IPacket[]): IPacketGroup[] {
+//   const result: IPacketGroup[] = [];
+//   // for (let i = 0; i < packets.length; i++) {
+//   //   let found = false;
+//   //   for (let j = 0; j < result.length; j++) {
+//   //     // console.log(result[i]);
+//   //     if (packets[i].messageId === result[j].id) {
+//   //       result[j].packets.push(packets[i]);
+//   //       found = true;
+//   //       break;
+//   //     }
+//   //   }
+//   //   if (!found) {
+//   //     result.push({
+//   //       packets: [packets[i]],
+//   //       src: packets[i].src,
+//   //       dst: packets[i].dst,
+//   //       id: packets[i].messageId,
+//   //       count: packets[i].pckCount,
+//   //     });
+//   //   }
+//   // }
+//   return result;
+// }
 
-export function packetsToMessages(packets: IPacket[], key: Key): IMessage[] {
-  const packetGroups = groupPacketsByMessage(packets);
-  return packetGroups
-    .map((group) => {
-      if (group.packets.length < group.count) return undefined;
-      const cipher = group.packets
-        .sort((a, b) => a.position - b.position)
-        .map((packet) => packet.data)
-        .join("");
-      const plain = JSON.parse(
-        key.decryptPrivate(cipher).toString()
-      ) as IMessageData;
-      return {
-        src: group.src,
-        dst: group.dst,
-        id: group.id,
-        type: plain.type,
-        data: plain.data,
-        date: group.date,
-      };
-    })
-    .filter((record) => !!record) as IMessage[];
-}
+// export function packetsToMessages(packets: IPacket[], key: Key): IMessage[] {
+//   // const packetGroups = groupPacketsByMessage(packets);
+//   // return packetGroups
+//   //   .map((group) => {
+//   //     if (group.packets.length < group.count) return undefined;
+//   //     const cipher = group.packets
+//   //       .sort((a, b) => a.position - b.position)
+//   //       .map((packet) => packet.data)
+//   //       .join("");
+//   //     const plain = JSON.parse(
+//   //       key.decryptPrivate(cipher).toString()
+//   //     ) as IMessageData;
+//   //     return {
+//   //       src: group.src,
+//   //       dst: group.dst,
+//   //       id: group.id,
+//   //       type: plain.type,
+//   //       data: plain.data,
+//   //       date: group.date,
+//   //     };
+//   //   })
+//   //   .filter((record) => !!record) as IMessage[];
+//   return [];
+// }

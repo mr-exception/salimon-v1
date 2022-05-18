@@ -8,6 +8,13 @@ export interface IMessage extends IEntity {
   packetsOrder: number[];
 }
 
+export type MessageType = "Text";
+
+export interface IMessageData {
+  data: string;
+  type: MessageType;
+}
+
 export function createMessageShortName(messageId: string, dstAddress: string): string {
   return `${dstAddress}-${messageId}`;
 }

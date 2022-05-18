@@ -1,5 +1,5 @@
 import { IndexableType } from "dexie";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   deleteThreadFromDB,
@@ -8,7 +8,9 @@ import {
   IRecord,
   updateThreadInDB,
 } from "Utils/storage";
-import { IThreadStorage } from "Structs/Thread";
+import { getThreadKey, IThreadStorage } from "Structs/Thread";
+import Key from "Utils/Key";
+import { AuthContext } from "AuthContextProvider";
 
 export interface IThreadsContext {
   activeThread?: IRecord<IThreadStorage>;
@@ -70,3 +72,12 @@ export const ThreadsContextProvider: React.FC<{ children: any }> = ({
     </ThreadsContext.Provider>
   );
 };
+
+export function useActiveThreadKey(): Key | undefined {
+  const { address, key } = useContext(AuthContext);
+  const { activeThread } = useContext(ThreadsContext);
+  if (!activeThread) {
+    return undefined;
+  }
+  return getThreadKey(activeThread.value, address, key);
+}

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   Message,
@@ -10,6 +10,8 @@ import { Request, Response } from 'express';
 import { SubmitMessageDTO } from './validators';
 import { createEntity } from 'src/models/entity.schema';
 import { FilesService } from 'src/files.service';
+import { join } from 'path';
+import { createReadStream, existsSync } from 'fs';
 
 export function createMessageShortName(
   messageId: string,
@@ -53,5 +55,19 @@ export class MessagesController {
     this.filesService.storeMessage(shortName, [data]);
     message.save();
     res.send(messageResponse(message));
+  }
+  @Get('get/:messageId')
+  async getMessage(
+    @Param('messageId') messageId: string,
+    @Res() res: Response,
+  ) {
+    const path = join(process.cwd(), 'messages', messageId + '.txt');
+    console.log(path);
+    if (!existsSync(path)) {
+      res.status(404).send({ message: 'message not found' });
+      return;
+    }
+    const file = createReadStream(path);
+    file.pipe(res);
   }
 }

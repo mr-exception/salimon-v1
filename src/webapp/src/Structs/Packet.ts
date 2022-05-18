@@ -1,9 +1,16 @@
+import { IMessage } from "datamodels/message";
+import { IHost } from "./Host";
+
 export interface IPacket {
   src: string;
   dst: string;
   data: string;
-  msg_id: string;
-  msg_count: number;
+  messageId: string;
+  pckCount: number;
   position: number;
-  created_at: number;
+}
+
+export interface IFetchedMessage {
+  traces: { data: IMessage; host: IHost }[];
+  messageId: string;
 }

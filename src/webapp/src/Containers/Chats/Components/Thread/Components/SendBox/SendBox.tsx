@@ -14,7 +14,7 @@ interface IProps {
 const SendBox: FC<IProps> = ({ activeThread }) => {
   const [text, setText] = useState<string>();
 
-  const { address } = useContext(AuthContext);
+  const { address, key } = useContext(AuthContext);
   const { hosts } = useContext(HostsContext);
   async function send() {
     if (!text) return;
@@ -22,17 +22,23 @@ const SendBox: FC<IProps> = ({ activeThread }) => {
       const relatedHosts = hosts.filter((host) =>
         activeThread.value.hosts.includes(host.id)
       );
-      const channelKey = Key.generateKeyByPrivateKey(
-        activeThread.value.members.find((item) => item.address === address)
-          ?.privateKey || ""
-      );
+      const activeChannelKeyCipher = activeThread.value.members.find(
+        (member) => member.address === address
+      )?.privateKey;
+      if (!activeChannelKeyCipher) {
+        return;
+      }
+      const channelKeyString = key
+        .decryptPrivate(activeChannelKeyCipher)
+        .toString();
+      const channelKey = Key.generateKeyByPrivateKey(channelKeyString);
       await sendMessage(
         address,
         activeThread.value.threadId,
         channelKey,
         text,
         relatedHosts.map((record) => record.value),
-        "text"
+        "Text"
       );
     } catch (error) {
       console.log(error);

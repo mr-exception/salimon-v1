@@ -1,39 +1,28 @@
 import { Axios } from "axios";
+import { IMessage } from "datamodels/message";
 import { IPacket } from "Structs/Packet";
 
 interface ISendPacketParams {
-  dst: string;
+  messageId: string;
   data: string;
+  dst: string;
   position: number;
-  msg_count: number;
-  msg_id: string;
+  pckCount: number;
 }
 export async function sendPacket(
   params: ISendPacketParams,
   axios: Axios
 ): Promise<IPacket> {
   return axios
-    .post<IPacket>("api/packets/send", params)
+    .post<IPacket>("messages/submit", params)
     .then((response) => response.data);
 }
 
-interface IFetchPacketsParam {
-  thread?: string;
-  dst?: string;
-  src?: string;
-  position?: number;
-  msg_count?: number;
-  msg_id?: string;
-  from?: string;
-  to?: string;
-  page?: number;
-  pageSize?: number;
-}
-export async function fetchPackets(
-  params: IFetchPacketsParam,
+export async function getMessage(
+  messageId: string,
   axios: Axios
-): Promise<IPacket[]> {
+): Promise<string> {
   return axios
-    .get<{ data: IPacket[] }>("/packets/fetch", { params })
-    .then((response) => response.data.data);
+    .get<string>("/messages/get/" + messageId)
+    .then((response) => response.data);
 }
