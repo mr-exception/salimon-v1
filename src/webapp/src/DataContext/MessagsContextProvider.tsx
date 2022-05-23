@@ -9,6 +9,7 @@ import { getMessage } from "API/Packets";
 import { createAxios } from "API/axios-inital";
 import { AuthContext } from "AuthContextProvider";
 import Key from "Utils/Key";
+import { ThreadsContext } from "./ThreadsContextProvider";
 
 export interface IPlainMessage {
   data: IMessageData;
@@ -47,6 +48,7 @@ export interface IFinalizedMessage {
 
 export interface IMessagesContext {
   messages: IFetchedMessage[];
+  newMessage: (value: IMessage, host: IHost) => void;
   requestThreadMessages: (
     thread: IThreadStorage,
     page: number,
@@ -56,6 +58,7 @@ export interface IMessagesContext {
 
 export const MessagesContext = createContext<IMessagesContext>({
   messages: [],
+  newMessage: () => {},
   requestThreadMessages: async (
     thread: IThreadStorage,
     page: number,
@@ -72,6 +75,7 @@ export const MessagesContextProvider: React.FC<{ children: any }> = ({
 }) => {
   const { hosts } = useContext(HostsContext);
   const { address, key } = useContext(AuthContext);
+  const { threads } = useContext(ThreadsContext);
   const [fetchedMessages, setFetchedMessages] = useState<IFetchedMessage[]>([]);
 
   async function requestThreadMessages(
@@ -99,11 +103,42 @@ export const MessagesContextProvider: React.FC<{ children: any }> = ({
     });
   }
 
+  async function newMessage(value: IMessage, host: IHost) {
+    const foundThread = threads.find(
+      (record) => record.value.threadId === value.dstAddress
+    );
+    if (foundThread) {
+      const threadKey = getThreadKey(foundThread.value, address, key);
+      if (!threadKey) {
+        console.error("thread key not found");
+        return;
+      }
+      const packetData = await getMessage(
+        value.dataPath,
+        createAxios(host.url, address, host.secret)
+      );
+      const fetchedMessage = {
+        srcAddress: value.srcAddress,
+        dstAddress: value.dstAddress,
+        messageId: value.messageId,
+        packetCount: value.packetCount,
+        packetsOrder: value.packetsOrder,
+        packets: packetData.split("\n").filter((line) => !!line),
+        createdAt: value.createdAt,
+      };
+      console.log(fetchedMessage);
+      setFetchedMessages((state) =>
+        updateFetchedMessages(state, [fetchedMessage], threadKey)
+      );
+    }
+  }
+
   return (
     <MessagesContext.Provider
       value={{
         messages: fetchedMessages,
         requestThreadMessages,
+        newMessage,
       }}
     >
       {children}

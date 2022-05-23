@@ -40,6 +40,7 @@ const SendBox: FC<IProps> = ({ activeThread }) => {
         relatedHosts.map((record) => record.value),
         "Text"
       );
+      setText(undefined);
     } catch (error) {
       console.log(error);
     }

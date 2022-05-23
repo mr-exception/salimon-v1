@@ -1,3 +1,4 @@
+import { IMessage } from "./message";
 import { IThread } from "./thread";
 
 export interface IEntity {
@@ -9,4 +10,5 @@ export interface IEntity {
 export interface IUpdate {
   type: "threadCreated" | "newMessage" | "threadUpdated" | "threadRemoved";
   thread?: IThread;
+  message?: IMessage;
 }

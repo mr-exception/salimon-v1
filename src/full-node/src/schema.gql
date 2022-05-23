@@ -37,9 +37,22 @@ type Thread {
   ownerAddress: String!
 }
 
+type Message {
+  _id: String!
+  createdAt: Float!
+  updatedAt: Float!
+  messageId: String!
+  dstAddress: String!
+  dataPath: String!
+  packetCount: Float!
+  srcAddress: String!
+  packetsOrder: [Int!]!
+}
+
 type Update {
   type: String!
   thread: Thread
+  message: Message
 }
 
 type Signature {
@@ -52,18 +65,6 @@ type Signature {
   secret: String!
   balance: Float!
   activeAt: Float!
-}
-
-type Message {
-  _id: String!
-  createdAt: Float!
-  updatedAt: Float!
-  messageId: String!
-  dstAddress: String!
-  dataPath: String!
-  packetCount: Float!
-  srcAddress: String!
-  packetsOrder: [Int!]!
 }
 
 type Query {

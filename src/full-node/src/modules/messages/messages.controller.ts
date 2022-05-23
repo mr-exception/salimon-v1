@@ -12,6 +12,7 @@ import { createEntity } from 'src/models/entity.schema';
 import { FilesService } from 'src/files.service';
 import { join } from 'path';
 import { createReadStream, existsSync } from 'fs';
+import { pubsub } from 'src/publish-center';
 
 export function createMessageShortName(
   messageId: string,
@@ -48,12 +49,18 @@ export class MessagesController {
       );
       const result = await record.save();
       this.filesService.storeMessage(shortName, [data]);
+      pubsub.publish('subToUpdates', {
+        subToUpdates: { type: 'newMessage', message: messageResponse(result) },
+      });
       res.send(messageResponse(result));
       return;
     }
     message.packetsOrder.push(position);
     this.filesService.storeMessage(shortName, [data]);
     message.save();
+    pubsub.publish('subToUpdates', {
+      subToUpdates: { type: 'newMessage', message: messageResponse(message) },
+    });
     res.send(messageResponse(message));
   }
   @Get('get/:messageId')

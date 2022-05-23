@@ -19,6 +19,7 @@ export interface IThreadsContext {
   addThread: (value: IThreadStorage) => void;
   removeThread: (id: IndexableType) => void;
   updateThread: (value: IRecord<IThreadStorage>) => void;
+  addOrUpdateThread: (value: IThreadStorage) => void;
 }
 
 export const ThreadsContext = createContext<IThreadsContext>({
@@ -27,15 +28,16 @@ export const ThreadsContext = createContext<IThreadsContext>({
   addThread: (value: IThreadStorage) => {},
   removeThread: (id: IndexableType) => {},
   updateThread: (value: IRecord<IThreadStorage>) => {},
+  addOrUpdateThread: (value: IThreadStorage) => {},
 });
 
 export const ThreadsContextProvider: React.FC<{ children: any }> = ({
   children,
 }) => {
+  const [loading, setLoading] = useState(false);
   const [activeThread, setActiveThread] = useState<IRecord<IThreadStorage>>();
   const [threads, setThreads] = useState<IRecord<IThreadStorage>[]>([]);
   async function addThread(value: IThreadStorage): Promise<void> {
-    console.log(value, threads);
     const id = await insertThreadInDB(value);
     setThreads([...threads, { value, id }]);
     toast.success("thread created!");
@@ -51,12 +53,26 @@ export const ThreadsContextProvider: React.FC<{ children: any }> = ({
     setThreads(result);
     setActiveThread(result.find((record) => record.id === value.id));
   }
+
+  async function addOrUpdateThread(value: IThreadStorage) {
+    const foundThread = threads.find(
+      (item) => item.value.threadId === value.threadId
+    );
+    if (foundThread) {
+      await updateThread(foundThread);
+    } else {
+      await addThread(value);
+    }
+  }
   useEffect(() => {
+    setLoading(true);
     getThreadsFromDB().then((value) => {
       setThreads(value);
+      setLoading(false);
     });
   }, []);
 
+  if (loading) return null;
   return (
     <ThreadsContext.Provider
       value={{
@@ -66,6 +82,7 @@ export const ThreadsContextProvider: React.FC<{ children: any }> = ({
         activeThread,
         setActiveThread,
         updateThread,
+        addOrUpdateThread,
       }}
     >
       {children}

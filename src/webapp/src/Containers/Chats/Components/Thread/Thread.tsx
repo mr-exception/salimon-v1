@@ -1,5 +1,3 @@
-import { AuthContext } from "AuthContextProvider";
-import { MessagesContextProvider } from "DataContext/MessagsContextProvider";
 import {
   ThreadsContext,
   useActiveThreadKey,
@@ -18,9 +16,7 @@ const Thread = () => {
   return (
     <div className="flex flex-col flex-1 w-full overflow-hidden bg-gray">
       <Header activeThread={activeThread} />
-      <MessagesContextProvider>
-        <MessageList activeThread={activeThread} threadKey={threadKey} />
-      </MessagesContextProvider>
+      <MessageList activeThread={activeThread} threadKey={threadKey} />
       <SendBox activeThread={activeThread} />
     </div>
   );

@@ -50,6 +50,16 @@ export const SUB_TO_UPDATES = gql`
         threadId
         ownerAddress
       }
+      message {
+        _id
+        messageId
+        dstAddress
+        dataPath
+        packetCount
+        srcAddress
+        packetsOrder
+        createdAt
+      }
     }
   }
 `;

@@ -15,6 +15,8 @@ import AuthStep from "./Components/AuthStep/AuthStep";
 import { ContactsContextProvider } from "DataContext/ContactsContextProvider";
 import Splash from "./Components/Splash/Splash";
 import { ThreadsContextProvider } from "DataContext/ThreadsContextProvider";
+import { Fetcher } from "DataContext/Fetcher";
+import { MessagesContextProvider } from "DataContext/MessagsContextProvider";
 
 interface IProps {
   children: any;
@@ -108,10 +110,14 @@ const App: React.FC<IProps> = ({ children }: IProps) => {
       <ThreadsContextProvider>
         <HostsContextProvider>
           <ContactsContextProvider>
-            <ModalsContextProvider>
-              <div className={Styles.children}>{children}</div>
-              <ModalContainer />
-            </ModalsContextProvider>
+            <MessagesContextProvider>
+              <Fetcher>
+                <ModalsContextProvider>
+                  <div className={Styles.children}>{children}</div>
+                  <ModalContainer />
+                </ModalsContextProvider>
+              </Fetcher>
+            </MessagesContextProvider>
           </ContactsContextProvider>
         </HostsContextProvider>
       </ThreadsContextProvider>
