@@ -68,6 +68,7 @@ export const GET_MESSAGES = gql`
       packetCount
       srcAddress
       packetsOrder
+      createdAt
     }
     getMessagesCount(targetId: $targetId)
   }

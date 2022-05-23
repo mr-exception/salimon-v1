@@ -62,7 +62,6 @@ export class MessagesController {
     @Res() res: Response,
   ) {
     const path = join(process.cwd(), 'messages', messageId + '.txt');
-    console.log(path);
     if (!existsSync(path)) {
       res.status(404).send({ message: 'message not found' });
       return;

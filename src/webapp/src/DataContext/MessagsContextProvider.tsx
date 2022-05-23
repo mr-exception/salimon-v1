@@ -1,14 +1,22 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { IHost } from "Structs/Host";
-import { IMessage } from "datamodels/message";
+import { IMessage, IMessageData } from "datamodels/message";
 import { HostsContext } from "./HostsContextProvider";
-import { IThreadStorage } from "Structs/Thread";
+import { getThreadKey, IThreadStorage } from "Structs/Thread";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { GET_MESSAGES, IGetMessages } from "./queries";
 import { getMessage } from "API/Packets";
 import { createAxios } from "API/axios-inital";
 import { AuthContext } from "AuthContextProvider";
+import Key from "Utils/Key";
 
+export interface IPlainMessage {
+  data: IMessageData;
+  srcAddress: string;
+  dstAddress: string;
+  threadId: string;
+  createdAt: number;
+}
 export interface IMessageTrace {
   data: IMessage[];
   hosts: IHost[];
@@ -21,8 +29,13 @@ export interface IFetchedMessage {
   srcAddress: string;
   dstAddress: string;
   packets: string[];
+  data?: IMessageData;
   packetsOrder: number[];
   packetCount: number;
+  createdAt: number;
+}
+interface IFetchedCompleteMessage extends IFetchedMessage {
+  data: IMessageData;
 }
 
 export interface IFinalizedMessage {
@@ -33,7 +46,6 @@ export interface IFinalizedMessage {
 }
 
 export interface IMessagesContext {
-  messageTraces: IMessageTrace[];
   messages: IFetchedMessage[];
   requestThreadMessages: (
     thread: IThreadStorage,
@@ -43,7 +55,6 @@ export interface IMessagesContext {
 }
 
 export const MessagesContext = createContext<IMessagesContext>({
-  messageTraces: [],
   messages: [],
   requestThreadMessages: async (
     thread: IThreadStorage,
@@ -60,8 +71,7 @@ export const MessagesContextProvider: React.FC<{ children: any }> = ({
   children,
 }) => {
   const { hosts } = useContext(HostsContext);
-  const { address } = useContext(AuthContext);
-  const [messageTraces, setMessageTraces] = useState<IMessageTrace[]>([]);
+  const { address, key } = useContext(AuthContext);
   const [fetchedMessages, setFetchedMessages] = useState<IFetchedMessage[]>([]);
 
   async function requestThreadMessages(
@@ -69,6 +79,11 @@ export const MessagesContextProvider: React.FC<{ children: any }> = ({
     page: number,
     pageSize: number
   ) {
+    const threadKey = getThreadKey(thread, address, key);
+    if (!threadKey) {
+      console.error("thread key not found");
+      return;
+    }
     const relatedHosts = hosts
       .filter((host) => thread.hosts.includes(host.id))
       .map((item) => item.value);
@@ -77,16 +92,16 @@ export const MessagesContextProvider: React.FC<{ children: any }> = ({
         resolve(await fetchMessageFromHost(host, thread.threadId, address));
       });
       promise.then((response) => {
-        setFetchedMessages((state) => updateFetchedMessages(state, response));
+        setFetchedMessages((state) =>
+          updateFetchedMessages(state, response, threadKey)
+        );
       });
     });
   }
-  console.log(fetchedMessages);
 
   return (
     <MessagesContext.Provider
       value={{
-        messageTraces,
         messages: fetchedMessages,
         requestThreadMessages,
       }}
@@ -124,6 +139,7 @@ async function fetchMessageFromHost(
       packetCount: messageData.packetCount,
       packetsOrder: messageData.packetsOrder,
       packets: packetData.split("\n").filter((line) => !!line),
+      createdAt: messageData.createdAt,
     });
   }
   return hostMessages;
@@ -131,7 +147,8 @@ async function fetchMessageFromHost(
 
 function updateFetchedMessages(
   storageList: IFetchedMessage[],
-  fetchedList: IFetchedMessage[]
+  fetchedList: IFetchedMessage[],
+  threadKey: Key
 ): IFetchedMessage[] {
   for (let i = 0; i < fetchedList.length; i++) {
     const fetchedMessage = fetchedList[i];
@@ -146,21 +163,54 @@ function updateFetchedMessages(
           ...storageList[j].packetsOrder,
           ...fetchedMessage.packetsOrder,
         ];
+        storageList[j] = checkMessageComplete(storageList[j], threadKey);
         found = true;
         break;
       }
     }
     if (!found) {
-      storageList = [...storageList, fetchedMessage];
+      storageList = [
+        ...storageList,
+        checkMessageComplete(fetchedMessage, threadKey),
+      ];
     }
   }
   return storageList;
 }
 
-export function useThreadMessages(threadId: string): IFetchedMessage[] {
+function checkMessageComplete(
+  message: IFetchedMessage,
+  key: Key
+): IFetchedMessage {
+  if (message.packets.length === message.packetCount) {
+    const cipherArray = [];
+    for (let i = 0; i < message.packets.length; i++) {
+      cipherArray.push(message.packets[message.packetsOrder[i]]);
+    }
+    const cipher = cipherArray.join("");
+    const plain = key.decryptPrivate(cipher).toString();
+
+    message.data = JSON.parse(plain) as IMessageData;
+  }
+  return message;
+}
+
+export function useThreadMessages(threadId: string): IPlainMessage[] {
   const { messages } = useContext(MessagesContext);
-  return messages.filter(
+  const threadMessages = messages.filter(
     (message) =>
       message.srcAddress === threadId || message.dstAddress === threadId
   );
+  const completedMessages = threadMessages.filter(
+    (record) => !!record.data
+  ) as IFetchedCompleteMessage[];
+  return completedMessages.map((record) => {
+    return {
+      srcAddress: record.srcAddress,
+      dstAddress: record.dstAddress,
+      threadId: record.dstAddress,
+      data: record.data,
+      createdAt: record.createdAt,
+    };
+  });
 }

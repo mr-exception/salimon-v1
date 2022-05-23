@@ -2,15 +2,13 @@ import Styles from "./styles.module.css";
 import { timstampsToRelativeString } from "Utils/date";
 import { useContext } from "react";
 import { AuthContext } from "AuthContextProvider";
-import { IMessage } from "datamodels/message";
-import { IHost } from "Structs/Host";
+import { IPlainMessage } from "DataContext/MessagsContextProvider";
 
 interface IProps {
-  message: IMessage;
-  hosts: IHost[];
+  message: IPlainMessage;
 }
 
-const MessageBox: React.FC<IProps> = ({ message, hosts }) => {
+const MessageBox: React.FC<IProps> = ({ message }) => {
   const { address } = useContext(AuthContext);
   return (
     <div
@@ -20,7 +18,7 @@ const MessageBox: React.FC<IProps> = ({ message, hosts }) => {
       }
     >
       <div className={Styles.box}>
-        <div className="col-xs-12">{message.dataPath}</div>
+        <div className="col-xs-12">{message.data.data}</div>
         <div className={Styles.date + " col-xs-12"}>
           {timstampsToRelativeString(message.createdAt)}
         </div>
