@@ -23,7 +23,15 @@ jobs:
         run: docker build . --file Dockerfile.webapp --tag salimondev/webapp:latest
       - name: Docker Push
         run: docker push salimondev/webapp:latest
-
+      # deploy to aravan kubernates service
+      - name: get deployment script
+        run: wget -q https://napi.arvancloud.com/paas/v1/regions/ir-thr-mn1/downloads/cli/linux/arvan
+      - name: make the script executable
+        run: chmod +x arvan
+      - name: login into kbs service
+        run: echo "${{ secrets.ARVAN_TOKEN }}" | ./arvan login
+      - name: deploy deployment
+        run: ./arvan paas apply -f kubernates/webapp-deployment.yml
     # steps:
     #   - name: Set up QEMU
     #     uses: docker/setup-qemu-action@v2

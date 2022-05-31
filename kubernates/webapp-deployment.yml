@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  labels:
+    app: webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+        - image: salimondev/webapp:latest
+          imagePullPolicy: Always
+          name: webapp
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              ephemeral-storage: 100M
+              memory: 100M
+            requests:
+              cpu: 100m
+              ephemeral-storage: 100M
+              memory: 100M
+      imagePullSecrets:
+        - name: regcred
