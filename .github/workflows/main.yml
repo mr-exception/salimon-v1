@@ -22,9 +22,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
       - name: Build the Docker image
-        run: docker build . --file Dockerfile.webapp --tag salimondev/webapp:latest
+        run: docker build . --file Dockerfile.webapp --tag salimondev/webapp:${{ github.sha }}
       - name: Docker Push
-        run: docker push salimondev/webapp:latest
+        run: docker push salimondev/webapp:${{ github.sha }}
       # deploy to aravan kubernates service
       - name: get deployment script
         run: wget -q https://napi.arvancloud.com/paas/v1/regions/ir-thr-mn1/downloads/cli/linux/arvan
@@ -32,5 +32,7 @@ jobs:
         run: chmod +x arvan
       - name: login into kbs service
         run: echo "${{ secrets.ARVAN_TOKEN }}" | ./arvan login
+      - name: change image name in deployment.yml
+        run: sed -i 's/salimondev\/webapp/salimondev\/webapp:${{ github.sha }}/g' kubernates/deployment.yml
       - name: deploy deployment
         run: ./arvan paas apply -f kubernates/webapp-deployment.yml
