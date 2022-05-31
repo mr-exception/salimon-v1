@@ -20,7 +20,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
       - name: check files
         run: |
-          ls
+          ll
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
