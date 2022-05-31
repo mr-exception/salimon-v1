@@ -9,11 +9,13 @@ jobs:
   push-image:
     runs-on: ubuntu-latest
     steps:
+      # install and build the project
       - uses: actions/checkout@v2
       - name: install packages
         run: npm run bootstrap
       - name: build webapp
-        run: npm run build:webapp
+        run: CI=false npm run build:webapp
+      # build and push image
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
