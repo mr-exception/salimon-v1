@@ -1,17 +1,7 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { AuthContext } from "AuthContextProvider";
 import { IndexableType } from "dexie";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { IContact } from "Structs/Contact";
-import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
-import { createClient } from "graphql-ws";
 import { IHost } from "Structs/Host";
 import {
   deleteHostFromDB,
