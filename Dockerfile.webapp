@@ -1,13 +1,17 @@
-FROM node:14
+# FROM node:14
 
-WORKDIR /app
+# WORKDIR /app
 
-COPY . ./
+# COPY . ./
 
-RUN npm run bootstrap
+# RUN npm run bootstrap
 
-RUN npm run build:webapp
+# RUN npm run build:webapp
 
-RUN npm i -g serve
+# RUN npm i -g serve
 
-CMD npm run prod:webapp
+# CMD npm run prod:webapp
+
+FROM nginx:latest
+COPY ./src/webapp/build /usr/share/nginx/html
+# COPY ./nginx.conf /etc/nginx/conf.d/default.conf
