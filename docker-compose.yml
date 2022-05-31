@@ -1,0 +1,9 @@
+version: '3'
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile.webapp
+    ports:
+      - "3000:3000"
+    stdin_open: true
