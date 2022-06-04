@@ -1,0 +1,11 @@
+FROM node:14
+
+WORKDIR /app
+
+COPY . ./
+
+RUN npm run bootstrap
+
+RUN npm run build:full-node
+
+CMD npm run prod:full-node

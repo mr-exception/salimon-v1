@@ -15,16 +15,22 @@ jobs:
         run: npm run bootstrap
       - name: build webapp
         run: CI=false npm run build:webapp
+      - name: build node
+        run: CI=false npm run build:node
       # build and push image
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Build the Docker image
+      - name: Build the webapp Docker image
         run: docker build . --file Dockerfile.webapp --tag salimondev/webapp:${{ github.sha }}
-      - name: Docker Push
+      - name: Build the node Docker image
+        run: docker build . --file Dockerfile.node --tag salimondev/node:${{ github.sha }}
+      - name: Docker Push Webapp
         run: docker push salimondev/webapp:${{ github.sha }}
+      - name: Docker Push Node
+        run: docker push salimondev/node:${{ github.sha }}
       # deploy to aravan kubernates service
       - name: get deployment script
         run: wget -q https://napi.arvancloud.com/paas/v1/regions/ir-thr-mn1/downloads/cli/linux/arvan
@@ -32,7 +38,11 @@ jobs:
         run: chmod +x arvan
       - name: login into kbs service
         run: echo "${{ secrets.ARVAN_TOKEN }}" | ./arvan login
-      - name: change image name in deployment.yml
+      - name: change image name in webapp deployment.yml
         run: sed -i 's/salimondev\/webapp/salimondev\/webapp:${{ github.sha }}/g' kubernates/webapp-deployment.yml
+      - name: change image name in node deployment.yml
+        run: sed -i 's/salimondev\/node/salimondev\/node:${{ github.sha }}/g' kubernates/node-deployment.yml
       - name: deploy deployment
         run: ./arvan paas apply -f kubernates/webapp-deployment.yml
+      - name: deploy deployment
+        run: ./arvan paas apply -f kubernates/node-deployment.yml
