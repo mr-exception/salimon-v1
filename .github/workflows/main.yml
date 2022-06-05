@@ -16,7 +16,7 @@ jobs:
       - name: build webapp
         run: CI=false npm run build:webapp
       - name: build node
-        run: CI=false npm run build:node
+        run: CI=false npm run build:full-node
       # build and push image
       - name: Login to DockerHub
         uses: docker/login-action@v2
