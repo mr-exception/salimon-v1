@@ -11,4 +11,4 @@ spec:
     termination: edge
     insecureEdgeTerminationPolicy: Allow
   port:
-    targetPort: 80
+    targetPort: 8080
