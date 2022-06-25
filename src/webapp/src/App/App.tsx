@@ -5,7 +5,6 @@ import { FaUsers, FaUser, FaGlobe } from "react-icons/fa";
 import { IoMdSettings, IoMdChatboxes } from "react-icons/io";
 import Styles from "./styles.module.css";
 import { ModalsContextProvider } from "Modals/ModalsContextProvider";
-import ModalContainer from "Modals/ModalContainer";
 import { HostsContextProvider } from "DataContext/HostsContextProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -114,7 +113,6 @@ const App: React.FC<IProps> = ({ children }: IProps) => {
               <Fetcher>
                 <ModalsContextProvider>
                   <div className={Styles.children}>{children}</div>
-                  <ModalContainer />
                 </ModalsContextProvider>
               </Fetcher>
             </MessagesContextProvider>
